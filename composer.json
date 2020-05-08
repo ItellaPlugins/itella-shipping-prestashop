@@ -1,0 +1,25 @@
+{
+    "name": "mijora/itellashipping",
+    "description": "Itella carrier module for prestashop",
+    "type": "prestashop-module",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rimvydas",
+            "email": "lithstud@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.6"
+    },
+    "autoload": {
+        "classmap": [
+            "itellashipping.php",
+            "classes/"
+        ]
+    },
+    "config": {
+        "preferred-install": "dist",
+        "prepend-autoloader": false
+    }
+}

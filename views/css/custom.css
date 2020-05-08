@@ -1,0 +1,21 @@
+.presta16_extra_content {
+  padding-top: 1rem;
+}
+
+.itella-shipping-container {
+  align-items: flex-start;
+  font-size: 12px;
+}
+
+.itella-shipping-container .itella-modal-btn {
+  font-size: 12px;
+}
+
+.presta_extra_content {
+  margin: initial;
+  padding: 0.5rem 0 0;
+}
+
+.itella-card-header img {
+	width: auto!important;
+}
