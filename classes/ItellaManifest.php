@@ -12,8 +12,6 @@ class ItellaManifest extends ObjectModel
 
   public $date_add;
 
-  public $date_call;
-
   private $_module;
 
   /** @var array Class variables and their validation types */
@@ -22,8 +20,7 @@ class ItellaManifest extends ObjectModel
     'table' => 'itella_manifest',
     'fields' => array(
       'id_shop' => array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId'),
-      'date_add' => array('type' => self::TYPE_DATE, 'validate' => 'isDate'),
-      'date_call' => array('type' => self::TYPE_DATE, ),
+      'date_add' => array('type' => self::TYPE_DATE, 'validate' => 'isDate')
     )
   );
 
