@@ -3,7 +3,7 @@
 <div id="itella-extra" class="presta16_extra_content">
 </div>
 <script>
-    var itella_locations = JSON.parse('{$pickup_points nofilter}');
+    var itella_locations = JSON.parse({$pickup_points|@json_encode nofilter});
 </script>
 <script>
     var itella_country = JSON.parse('{$itella_send_to nofilter}');

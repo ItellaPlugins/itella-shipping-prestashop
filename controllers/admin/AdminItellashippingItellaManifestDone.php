@@ -167,7 +167,7 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
         $mailer = new CallCourier($send_to, $isTest);
         $result = $mailer
           ->setSenderEmail($this->context->employee->email)
-          ->setSubject('E-com order booking')
+          ->setSubject(Configuration::get('ITELLA_CALL_EMAIL_SUBJECT'))
           ->setPickUpAddress(array(
             'sender' => Configuration::get('ITELLA_SENDER_NAME'),
             'address' => $storeObj->getFormatedAddress(),
