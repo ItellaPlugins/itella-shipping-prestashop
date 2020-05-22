@@ -69,6 +69,8 @@ class ItellaShipping extends CarrierModule
   private $_advanced_keys = array(
     'ITELLA_CALL_EMAIL_LT',
     'ITELLA_CALL_EMAIL_LV',
+    'ITELLA_CALL_EMAIL_EE',
+    'ITELLA_CALL_EMAIL_FI',
   );
 
   private $switch = array();
@@ -77,7 +79,7 @@ class ItellaShipping extends CarrierModule
   {
     $this->name = self::$_name;
     $this->tab = 'shipping_logistics';
-    $this->version = '1.0.3';
+    $this->version = '1.1.0';
     $this->author = 'Mijora.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.8');
@@ -148,6 +150,7 @@ class ItellaShipping extends CarrierModule
     }
 
     // set defaults
+    Configuration::updateValue('ITELLA_CALL_EMAIL_SUBJECT', 'E-com order booking');
     Configuration::updateValue('ITELLA_CALL_EMAIL_LT', 'smartship.routing.lt@itella.com');
     Configuration::updateValue('ITELLA_CALL_EMAIL_LV', 'smartship.routing.lv@itella.com');
     return true;
@@ -576,6 +579,9 @@ class ItellaShipping extends CarrierModule
     $errors = array();
     $required = $this->l('is required');
 
+    if (empty(Tools::getValue('ITELLA_CALL_EMAIL_SUBJECT'))) {
+      $errors[] = $this->l('Courrier call email subject') . ' ' . $required;
+    }
     if (empty(Tools::getValue('ITELLA_CALL_EMAIL_LT'))) {
       $errors[] = $this->l('LT courrier call email') . ' ' . $required;
     }
@@ -599,6 +605,7 @@ class ItellaShipping extends CarrierModule
         $value = strval(Tools::getValue($key));
         Configuration::updateValue($key, $value);
       }
+      Configuration::updateValue('ITELLA_CALL_EMAIL_SUBJECT', strval(Tools::getValue('ITELLA_CALL_EMAIL_SUBJECT')));
       $output .= $this->displayConfirmation($this->l('Advanced settings updated'));
     }
 
@@ -729,6 +736,10 @@ class ItellaShipping extends CarrierModule
               array(
                 'id_option' => 'EE',
                 'name' => 'EE - Estonia'
+              ),
+              array(
+                'id_option' => 'FI',
+                'name' => 'FI - Finland'
               ),
             ),
             'id' => 'id_option',
@@ -977,7 +988,7 @@ class ItellaShipping extends CarrierModule
     } else {
       $last_update = date('Y-m-d H:i:s', $last_update);
       $dir = _PS_MODULE_DIR_ . $this->name . "/locations/";
-      $locations = array('LT' => 0, 'LV' => 0, 'EE' => 0);
+      $locations = array('LT' => 0, 'LV' => 0, 'EE' => 0, 'FI' => 0);
       foreach (array_keys($locations) as $key) {
         if (file_exists($dir . 'locations_' . $key . '.json')) {
           $points = $this->loadItellaLocations($key);
@@ -1018,6 +1029,12 @@ class ItellaShipping extends CarrierModule
             'name' => 'itella_total_ee_locations',
             'html_content' => '<label class="control-label"><b>' . $locations['EE'] . '</b></label>',
           ),
+          array(
+            'type' => 'html',
+            'label' => 'FI ' . $this->l('Total pickup points:'),
+            'name' => 'itella_total_fi_locations',
+            'html_content' => '<label class="control-label"><b>' . $locations['FI'] . '</b></label>',
+          ),
         ),
         'submit' => [
           'title' => $this->l('Update'),
@@ -1042,6 +1059,13 @@ class ItellaShipping extends CarrierModule
       'input' => array(
         array(
           'type' => 'text',
+          'label' => $this->l('Itella email subject'),
+          'name' => 'ITELLA_CALL_EMAIL_SUBJECT',
+          'size' => 20,
+          'required' => true
+        ),
+        array(
+          'type' => 'text',
           'label' => $this->l('Itella LT email'),
           'name' => 'ITELLA_CALL_EMAIL_LT',
           'size' => 20,
@@ -1051,6 +1075,20 @@ class ItellaShipping extends CarrierModule
           'type' => 'text',
           'label' => $this->l('Itella LV email'),
           'name' => 'ITELLA_CALL_EMAIL_LV',
+          'size' => 20,
+          'required' => true
+        ),
+        array(
+          'type' => 'text',
+          'label' => $this->l('Itella EE email'),
+          'name' => 'ITELLA_CALL_EMAIL_EE',
+          'size' => 20,
+          'required' => true
+        ),
+        array(
+          'type' => 'text',
+          'label' => $this->l('Itella FI email'),
+          'name' => 'ITELLA_CALL_EMAIL_FI',
           'size' => 20,
           'required' => true
         ),
@@ -1081,6 +1119,7 @@ class ItellaShipping extends CarrierModule
     foreach ($this->_advanced_keys as $key) {
       $helper->fields_value[$key] = Configuration::get($key);
     }
+    $helper->fields_value['ITELLA_CALL_EMAIL_SUBJECT'] = Configuration::get('ITELLA_CALL_EMAIL_SUBJECT');
 
     return $helper->generateForm($fieldsForm);
   }
@@ -1097,10 +1136,15 @@ class ItellaShipping extends CarrierModule
 
   public function loadItellaLocations($country = 'LT')
   {
-    if (!in_array($country, array('LT', 'LV', 'EE'))) {
+    if (!in_array($country, array('LT', 'LV', 'EE', 'FI'))) {
       return false;
     }
     $terminals_json_file_dir = _PS_MODULE_DIR_ . $this->name . "/locations/locations_" . $country . ".json";
+
+    if (!file_exists($terminals_json_file_dir)) {
+      return false;
+    }
+
     $terminals_file = fopen($terminals_json_file_dir, "r");
     $terminals = fread($terminals_file, filesize($terminals_json_file_dir) + 10);
     fclose($terminals_file);
@@ -1118,13 +1162,18 @@ class ItellaShipping extends CarrierModule
    */
   public function isLocation($id, $country = false)
   {
-    // if false or not array search all available
-    if (!$country || !is_array($country)) {
-      $country = array('LT', 'LV', 'EE');
+    $available = array('LT', 'LV', 'EE', 'FI');
+    // if false search all available
+    if (!$country) {
+      $country = $available;
+    }
+
+    if (!is_array($country)) {
+      $country = array($country);
     }
 
     foreach ($country as $code) {
-      if (!in_array($code, array('LT', 'LV', 'EE'))) {
+      if (!in_array(strtoupper($code), $available)) {
         continue;
       }
       $locations = json_decode($this->loadItellaLocations($code), true);
@@ -1181,6 +1230,8 @@ class ItellaShipping extends CarrierModule
       ));
       if (version_compare(_PS_VERSION_, '1.7.0', '>=')) {
         $this->context->controller->registerStylesheet('modules-itella-leaflet-css', 'modules/' . $this->name . '/views/css/leaflet.css');
+        $this->context->controller->registerStylesheet('modules-itella-MarkerCluster-css', 'modules/' . $this->name . '/views/css/MarkerCluster.css');
+        $this->context->controller->registerStylesheet('modules-itella-MarkerCluster.Default-css', 'modules/' . $this->name . '/views/css/MarkerCluster.Default.css');
         $this->context->controller->registerStylesheet('modules-itella-css', 'modules/' . $this->name . '/views/css/itella-mapping.css');
         $this->context->controller->registerStylesheet('modules-itella-custom-css', 'modules/' . $this->name . '/views/css/custom.css');
         $this->context->controller->registerJavascript('modules-itella-leaflet-js', 'modules/' . $this->name . '/views/js/leaflet.js');
@@ -1188,6 +1239,8 @@ class ItellaShipping extends CarrierModule
         $this->context->controller->registerJavascript('modules-itella-front-js', 'modules/' . $this->name . '/views/js/front.js');
       } else {
         $this->context->controller->addCSS($this->_path . 'views/css/leaflet.css');
+        $this->context->controller->addCSS($this->_path . 'views/css/MarkerCluster.css');
+        $this->context->controller->addCSS($this->_path . 'views/css/MarkerCluster.Default.css');
         $this->context->controller->addCSS($this->_path . 'views/css/itella-mapping.css');
         $this->context->controller->addCSS($this->_path . 'views/css/custom.css');
         $this->context->controller->addJS($this->_path . 'views/js/leaflet.js');
@@ -1411,8 +1464,8 @@ class ItellaShipping extends CarrierModule
       require_once _PS_MODULE_DIR_ . 'itellashipping/vendor/itella-api/vendor/autoload.php';
       Configuration::updateGlobalValue('ITELLA_LAST_UPDATE', time());
       $loc = new \Mijora\Itella\Locations\PickupPoints('https://locationservice.posti.com/api/2/location');
-      
-      foreach (array('LT', 'LV', 'EE') as $country) {
+
+      foreach (array('LT', 'LV', 'EE', 'FI') as $country) {
         $itellaLoc = $loc->getLocationsByCountry($country);
         $loc->saveLocationsToJSONFile($dir . 'locations_' . $country . '.json', json_encode($itellaLoc));
       }
@@ -1421,12 +1474,12 @@ class ItellaShipping extends CarrierModule
 
   private function locationsFilesExist($dir)
   {
-    foreach(array('LT', 'LV', 'EE') as $country) {
+    foreach (array('LT', 'LV', 'EE', 'FI') as $country) {
       if (!is_file($dir . 'locations_' . $country . '.json')) {
         return false;
       }
     }
-    
+
     return true;
   }
 
