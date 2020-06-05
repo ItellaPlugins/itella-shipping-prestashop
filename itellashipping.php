@@ -79,7 +79,7 @@ class ItellaShipping extends CarrierModule
   {
     $this->name = self::$_name;
     $this->tab = 'shipping_logistics';
-    $this->version = '1.1.0';
+    $this->version = '1.1.1';
     $this->author = 'Mijora.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.8');
@@ -143,6 +143,15 @@ class ItellaShipping extends CarrierModule
     ) {
       return false;
     }
+
+    foreach (Language::getLanguages(false) as $lng) {
+      if ($lng['iso_code'] == 'lt') {
+        $this->_carriers['ITELLA_COURIER_ID'] = 'Itella pristatymas į nurodytą adresą';
+        $this->_carriers['ITELLA_PICKUP_POINT_ID'] = 'Itella pristatymas į atsiėmimo tašką';
+        break;
+      }
+    }
+
     foreach ($this->_carriers as $key => $title) {
       if (!$this->createCarrier($key, $title)) {
         return false;
@@ -370,7 +379,7 @@ class ItellaShipping extends CarrierModule
     $carrier->range_behavior = 0;
     $carrier->shipping_external = true;
     $carrier->shipping_handling = false;
-    $carrier->limited_countries = array('lt');
+    //$carrier->limited_countries = array('lt');
     $carrier->url = '';
     $carrier->active = true;
     $carrier->deleted = 0;
