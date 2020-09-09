@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.2] - 2020-09-09
+### Changed
+- Prioritizes smartpost points when listing in map.
+
 ## [1.1.1] - 2020-06-05
 ### Changed
 - Carrier names by default is now in lithuanian if LT language is found.
