@@ -1,8 +1,8 @@
 # Changelog
 
 ## [1.1.2] - 2020-09-09
-### Changed
-- Prioritizes smartpost points when listing in map.
+### Updated
+- itella-mapping
 
 ## [1.1.1] - 2020-06-05
 ### Changed
