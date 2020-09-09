@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.1.2] - 2020-09-09
+### Updated
+- itella-mapping.js to v1.2.3
+
 ## [1.1.1] - 2020-06-05
 ### Changed
 - Carrier names by default is now in lithuanian if LT language is found.
