@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.2.5] - Receiver info change for Pickups
+### Changed
+- Receiver information is altered if pickup point pupCode is set. Using set pupCode location information will be set as street1, city and postalCode instead of original receiver street1, city and postalCode
+
+## [2.2.4] - Finland mobile numbers
+### Improved
+- Improved Finland mobile number parsing
+
 ## [2.2.3] - Manifest date format
 ### Added
 - Optional dateFormat argument to Manifest constructor for setting custom manifest generation date format. Default format `'Y-m-d'` (2020-12-30)
