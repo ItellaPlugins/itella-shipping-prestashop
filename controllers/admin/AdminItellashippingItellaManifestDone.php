@@ -153,19 +153,34 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
         exit();
       }
       $manifest = new ItellaManifest(Tools::getValue('id_manifest'));
-      $manifest_base64 = $manifest->getManifestBase64();
 
       ItellaShipping::checkForClass('ItellaStore');
       $storeObj = new ItellaStore(Tools::getValue('id_itella_store'));
       $isTest = (Configuration::get('ITELLA_TEST_MODE') == 1);
-
+      
+      $mail_sent = false;
+      
       try {
         $send_to = Configuration::get('ITELLA_CALL_EMAIL_' . strtoupper($storeObj->country_code));
         if (!$send_to) {
-          throw new \Exception($this->l('Courier service email not set'));
+          throw new \Exception($this->l('Courier service email not set') . 'ITELLA_CALL_EMAIL_' . strtoupper($storeObj->country_code));
         }
+
+        $file_attachement = array(
+          'content' => $manifest->getManifestString(),
+          'name' => 'manifest.pdf',
+          'mime' => 'application/pdf'
+        );
+
+        $id_lang = Language::getIdByIso('en');
+        if (!$id_lang) {
+          $id_lang = (int)Configuration::get('PS_LANG_DEFAULT');
+        }
+
+        $dir_mail = $this->module->getLocalPath() . 'mails/';
+
         $mailer = new CallCourier($send_to, $isTest);
-        $result = $mailer
+        $body_html = $mailer
           ->setSenderEmail($this->context->employee->email)
           ->setSubject(Configuration::get('ITELLA_CALL_EMAIL_SUBJECT'))
           ->setPickUpAddress(array(
@@ -174,12 +189,39 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
             //'pickup_time' => $storeObj->pick_start . ' - ' . $storeObj->pick_finish,
             'contact_phone' => $storeObj->phone,
           ))
-          ->setAttachment($manifest_base64, true)
-          ->callCourier();
+          ->setAttachment(true)
+          ->buildMailBody();
+
+        $data = array(
+          '{title}' => Configuration::get('ITELLA_CALL_EMAIL_SUBJECT'),
+          '{body}' => $body_html
+        );
+
+        $mail_sent = Mail::Send(
+          $id_lang,
+          'itella_call_courier',
+          ($isTest ? 'TEST CALL - ' : '') . Configuration::get('ITELLA_CALL_EMAIL_SUBJECT'),
+          $data,
+          $send_to,
+          'Itella Courier Service',
+          $this->context->employee->email,
+          Configuration::get('ITELLA_SENDER_NAME'),
+          $file_attachement,
+          null,
+          $dir_mail,
+          false,
+          (int) $storeObj->id_shop
+        );
       } catch (\Exception $th) {
         echo json_encode(array('error' => $this->l('Call courier failed with:') . ' ' . $th->getMessage()));
         exit();
       }
+
+      if (!$mail_sent) {
+        echo json_encode(array('error' => $this->l('Call courier failed')));
+        exit();
+      }
+
       echo json_encode(array('success' => $this->l('Itella courier called')));
       exit();
     }

@@ -86,6 +86,12 @@ class ItellaManifest extends ObjectModel
     return $pdf->setToString(true)->setBase64(true)->printManifest('manifest.pdf');
   }
 
+  public function getManifestString()
+  {
+    $pdf = $this->buildManifest();
+    return $pdf->setToString(true)->setBase64(false)->printManifest('manifest.pdf');
+  }
+
   protected function generateDeliveryAddress($itella_cart)
   {
     $cart = new Cart($itella_cart['id_cart']);
