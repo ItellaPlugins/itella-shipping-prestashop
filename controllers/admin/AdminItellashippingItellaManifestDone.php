@@ -163,7 +163,7 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
       try {
         $send_to = Configuration::get('ITELLA_CALL_EMAIL_' . strtoupper($storeObj->country_code));
         if (!$send_to) {
-          throw new \Exception($this->l('Courier service email not set') . 'ITELLA_CALL_EMAIL_' . strtoupper($storeObj->country_code));
+          throw new \Exception($this->l('Courier service email not set'));
         }
 
         $file_attachement = array(

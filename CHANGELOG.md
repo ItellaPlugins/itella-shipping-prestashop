@@ -1,6 +1,6 @@
 # Changelog
 
-## [UNRELEASED]
+## [1.1.5] - 2020-12-14
 ### Changed
 - Module now sends "Call Courier" email using Prestashop mailing functionality.
 
