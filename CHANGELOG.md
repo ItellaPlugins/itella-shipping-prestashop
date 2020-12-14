@@ -1,5 +1,9 @@
 # Changelog
 
+## [UNRELEASED]
+### Changed
+- Module now sends "Call Courier" email using Prestashop mailing functionality.
+
 ## [1.1.4] - 2020-11-26
 ### Added
 - Estonian localization
