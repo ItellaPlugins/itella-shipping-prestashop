@@ -388,6 +388,7 @@ console.log('label',itella_label);
             console.log(res);
             showResponse(res.success, 'success');
             itella_label = true;
+            location.reload();
           }
         },
         complete: function(jqXHR, status) {

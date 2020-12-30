@@ -158,11 +158,56 @@ class ItellaShipping extends CarrierModule
       }
     }
 
+    //install of custom state
+    $this->getCustomOrderState();
+
     // set defaults
     Configuration::updateValue('ITELLA_CALL_EMAIL_SUBJECT', 'E-com order booking');
     Configuration::updateValue('ITELLA_CALL_EMAIL_LT', 'smartship.routing.lt@itella.com');
     Configuration::updateValue('ITELLA_CALL_EMAIL_LV', 'smartship.routing.lv@itella.com');
     return true;
+  }
+
+  public function getCustomOrderState()
+  {
+    $order_state = (int)Configuration::get('itella_order_state');
+    $order_status = new OrderState((int)$order_state, (int)Context::getContext()->language->id);
+
+    if (!$order_status->id || !$order_state) {
+      $orderState = new OrderState();
+      $orderState->name = array();
+      foreach (Language::getLanguages() as $language) {
+        if (strtolower($language['iso_code']) == 'lt')
+          $orderState->name[$language['id_lang']] = 'Paruošta siųsti su Itella';
+        else
+          $orderState->name[$language['id_lang']] = 'Shipment ready for Itella';
+      }
+      $orderState->send_email = false;
+      $orderState->color = '#DDEEFF';
+      $orderState->hidden = false;
+      $orderState->delivery = false;
+      $orderState->logable = true;
+      $orderState->invoice = false;
+      $orderState->unremovable = false;
+      if ($orderState->add()) {
+        Configuration::updateValue('itella_order_state', $orderState->id);
+        return $orderState->id;
+      }
+    }
+    return $order_state;
+  }
+
+  public function changeOrderStatus($id_order, $status)
+  {
+    $order = new Order((int)$id_order);
+    if ($order->current_state != $status)
+    {
+      $history = new OrderHistory();
+      $history->id_order = (int)$id_order;
+      $history->id_employee = (int)Context::getContext()->employee->id;
+      $history->changeIdOrderState((int)$status, $order);
+      $history->addWithemail(true);
+    }
   }
 
   /**
