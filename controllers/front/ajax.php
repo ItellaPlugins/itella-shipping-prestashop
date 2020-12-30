@@ -262,6 +262,8 @@ class ItellashippingAjaxModuleFrontController extends ModuleFrontController
       $itellaCart->updateItellaCartTrackNumber($data['id_cart'], $tracking_number);
       // save tracking number(s) to order carrier as well
       $order->setWsShippingNumber($tracking_number);
+      $order->shipping_number = $tracking_number;
+      $order->update();
 
       ItellaShipping::changeOrderStatus($id_order, ItellaShipping::getCustomOrderState());
 
