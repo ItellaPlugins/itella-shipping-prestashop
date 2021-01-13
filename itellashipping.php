@@ -1262,7 +1262,7 @@ class ItellaShipping extends CarrierModule
       $params['extra_template_vars'], 
       array(
         '{followup}' => str_replace('@', $order->shipping_number, $carrier->url),
-        '{url_traking}' => $carrier->url,
+        '{shipping_url}' => $carrier->url,
         '{shipping_number}' => $order->shipping_number
     ));
   }

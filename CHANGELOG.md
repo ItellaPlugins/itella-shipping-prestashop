@@ -7,6 +7,7 @@
 ### Improved
 - programic code
 - created an order status change when a label is generated
+- created ability to add tracking number to email template using {tracking_code} or tracking url using {tracking_url}
 
 ### Changed
 - name "Itella" to "Smartpost"
