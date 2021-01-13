@@ -17,8 +17,8 @@ class ItellaShipping extends CarrierModule
     'ItellaManifest' => 'classes/ItellaManifest.php',
   );
   protected $_carriers = array(
-    'ITELLA_COURIER_ID' => 'Itella courier',
-    'ITELLA_PICKUP_POINT_ID' => 'Itella pickup point'
+    'ITELLA_COURIER_ID' => 'Smartpost courier',
+    'ITELLA_PICKUP_POINT_ID' => 'Smartpost pickup point'
   );
 
   private $_postErrors = array();
@@ -35,7 +35,7 @@ class ItellaShipping extends CarrierModule
     'OrderConfirmation',
 
     'displayBeforeCarrier',
-
+    'actionGetExtraMailTemplateVars',
     'actionCarrierProcess',
     'orderDetailDisplayed',
     'actionValidateStepComplete'
@@ -79,7 +79,7 @@ class ItellaShipping extends CarrierModule
   {
     $this->name = self::$_name;
     $this->tab = 'shipping_logistics';
-    $this->version = '1.1.5';
+    $this->version = '1.1.6';
     $this->author = 'Mijora.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.8');
@@ -87,8 +87,10 @@ class ItellaShipping extends CarrierModule
 
     parent::__construct();
 
-    $this->displayName = $this->l('Itella Shipping');
-    $this->description = $this->l('Itella shipping module');
+    $this->displayName = $this->l('Smartpost Shipping');
+    $this->description = $this->l('Smartpost Itella shipping module');
+    $this->available_countries = array('LT', 'LV', 'EE', 'FI');
+    $this->countries_names = array('LT' => 'Lithuania', 'LV' => 'Latvia', 'EE' => 'Estonia', 'FI' => 'Finland');
 
     $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
@@ -103,21 +105,21 @@ class ItellaShipping extends CarrierModule
         !in_array((int) (Configuration::get('ITELLA_CARRIER_ID')), $id_carrier_list) &&
         !in_array((int) (Configuration::get('ITELLA_PICKUP_CARRIER_ID')), $id_carrier_list)
       ) {
-        $warning[] = $this->l('"Itella carriers"');
+        $warning[] = $this->l('"Smartpost carriers"');
       }
 
       if (
         !Configuration::get($this->_configKeys['ITELLA_API_USER_2317']) ||
         !Configuration::get($this->_configKeys['ITELLA_API_USER_2711'])
       ) {
-        $warning[] = $this->l('"Both Itella API users"');
+        $warning[] = $this->l('"Both Smartpost API users"');
       }
 
       if (
         !Configuration::get($this->_configKeys['ITELLA_API_PASS_2317']) ||
         !Configuration::get($this->_configKeys['ITELLA_API_PASS_2711'])
       ) {
-        $warning[] = $this->l('"Both Itella API password"');
+        $warning[] = $this->l('"Both Smartpost API password"');
       }
       if (count($warning)) {
         $this->warning .= implode(', ', $warning) . $this->l('must be configured to use this module.');
@@ -146,8 +148,8 @@ class ItellaShipping extends CarrierModule
 
     foreach (Language::getLanguages(false) as $lng) {
       if ($lng['iso_code'] == 'lt') {
-        $this->_carriers['ITELLA_COURIER_ID'] = 'Itella pristatymas į nurodytą adresą';
-        $this->_carriers['ITELLA_PICKUP_POINT_ID'] = 'Itella pristatymas į atsiėmimo tašką';
+        $this->_carriers['ITELLA_COURIER_ID'] = 'Smartpost pristatymas į nurodytą adresą';
+        $this->_carriers['ITELLA_PICKUP_POINT_ID'] = 'Smartpost pristatymas į atsiėmimo tašką';
         break;
       }
     }
@@ -158,11 +160,56 @@ class ItellaShipping extends CarrierModule
       }
     }
 
+    //install of custom state
+    $this->getCustomOrderState();
+
     // set defaults
     Configuration::updateValue('ITELLA_CALL_EMAIL_SUBJECT', 'E-com order booking');
     Configuration::updateValue('ITELLA_CALL_EMAIL_LT', 'smartship.routing.lt@itella.com');
     Configuration::updateValue('ITELLA_CALL_EMAIL_LV', 'smartship.routing.lv@itella.com');
     return true;
+  }
+
+  public function getCustomOrderState()
+  {
+    $order_state = (int)Configuration::get('itella_order_state');
+    $order_status = new OrderState((int)$order_state, (int)Context::getContext()->language->id);
+
+    if (!$order_status->id || !$order_state) {
+      $orderState = new OrderState();
+      $orderState->name = array();
+      foreach (Language::getLanguages() as $language) {
+        if (strtolower($language['iso_code']) == 'lt')
+          $orderState->name[$language['id_lang']] = 'Paruošta siųsti su Smartpost';
+        else
+          $orderState->name[$language['id_lang']] = 'Shipment ready for Smartpost';
+      }
+      $orderState->send_email = false;
+      $orderState->color = '#DDEEFF';
+      $orderState->hidden = false;
+      $orderState->delivery = false;
+      $orderState->logable = true;
+      $orderState->invoice = false;
+      $orderState->unremovable = false;
+      if ($orderState->add()) {
+        Configuration::updateValue('itella_order_state', $orderState->id);
+        return $orderState->id;
+      }
+    }
+    return $order_state;
+  }
+
+  public function changeOrderStatus($id_order, $status)
+  {
+    $order = new Order((int)$id_order);
+    if ($order->current_state != $status)
+    {
+      $history = new OrderHistory();
+      $history->id_order = (int)$id_order;
+      $history->id_employee = (int)Context::getContext()->employee->id;
+      $history->changeIdOrderState((int)$status, $order);
+      $history->addWithemail(true);
+    }
   }
 
   /**
@@ -178,11 +225,11 @@ class ItellaShipping extends CarrierModule
         'parent_tab' => -1
       ),
       self::CONTROLLER_MANIFEST => array(
-        'title' => $this->l('Itella'),
+        'title' => $this->l('Smartpost'),
         'parent_tab' => (int) Tab::getIdFromClassName('AdminParentShipping')
       ),
       self::CONTROLLER_MANIFEST_DONE => array(
-        'title' => $this->l('Itella generated manifests'),
+        'title' => $this->l('Smartpost generated manifests'),
         'parent_tab' => -1
       )
     );
@@ -694,6 +741,16 @@ class ItellaShipping extends CarrierModule
     // Get default language
     $defaultLang = (int) Configuration::get('PS_LANG_DEFAULT');
 
+    $query_country_values = array();
+    foreach ($this->available_countries as $country) {
+      if (isset($this->countries_names[$country])) {
+        array_push($query_country_values, array(
+          'id_option' => $country,
+          'name' => $country . ' - ' . $this->countries_names[$country]
+        ));
+      }
+    }
+
     // Init Fields form array
     $fieldsForm[0]['form'] = [
       'legend' => array(
@@ -733,24 +790,7 @@ class ItellaShipping extends CarrierModule
           'label' => $this->l('Country Code'),
           'name' => 'ITELLA_SENDER_COUNTRY_CODE',
           'options' => array(
-            'query' => $options = array(
-              array(
-                'id_option' => 'LT',
-                'name' => 'LT - Lithuania'
-              ),
-              array(
-                'id_option' => 'LV',
-                'name' => 'LV - Latvia'
-              ),
-              array(
-                'id_option' => 'EE',
-                'name' => 'EE - Estonia'
-              ),
-              array(
-                'id_option' => 'FI',
-                'name' => 'FI - Finland'
-              ),
-            ),
+            'query' => $query_country_values,
             'id' => 'id_option',
             'name' => 'name'
           )
@@ -997,7 +1037,10 @@ class ItellaShipping extends CarrierModule
     } else {
       $last_update = date('Y-m-d H:i:s', $last_update);
       $dir = _PS_MODULE_DIR_ . $this->name . "/locations/";
-      $locations = array('LT' => 0, 'LV' => 0, 'EE' => 0, 'FI' => 0);
+      $locations = array();
+      foreach ($this->available_countries as $country) {
+        $locations[$country] = 0;
+      }
       foreach (array_keys($locations) as $key) {
         if (file_exists($dir . 'locations_' . $key . '.json')) {
           $points = $this->loadItellaLocations($key);
@@ -1068,35 +1111,35 @@ class ItellaShipping extends CarrierModule
       'input' => array(
         array(
           'type' => 'text',
-          'label' => $this->l('Itella email subject'),
+          'label' => $this->l('Smartpost email subject'),
           'name' => 'ITELLA_CALL_EMAIL_SUBJECT',
           'size' => 20,
           'required' => true
         ),
         array(
           'type' => 'text',
-          'label' => $this->l('Itella LT email'),
+          'label' => $this->l('Smartpost LT email'),
           'name' => 'ITELLA_CALL_EMAIL_LT',
           'size' => 20,
           'required' => true
         ),
         array(
           'type' => 'text',
-          'label' => $this->l('Itella LV email'),
+          'label' => $this->l('Smartpost LV email'),
           'name' => 'ITELLA_CALL_EMAIL_LV',
           'size' => 20,
           'required' => true
         ),
         array(
           'type' => 'text',
-          'label' => $this->l('Itella EE email'),
+          'label' => $this->l('Smartpost EE email'),
           'name' => 'ITELLA_CALL_EMAIL_EE',
           'size' => 20,
           'required' => true
         ),
         array(
           'type' => 'text',
-          'label' => $this->l('Itella FI email'),
+          'label' => $this->l('Smartpost FI email'),
           'name' => 'ITELLA_CALL_EMAIL_FI',
           'size' => 20,
           'required' => true
@@ -1145,7 +1188,7 @@ class ItellaShipping extends CarrierModule
 
   public function loadItellaLocations($country = 'LT')
   {
-    if (!in_array($country, array('LT', 'LV', 'EE', 'FI'))) {
+    if (!in_array($country, $this->available_countries)) {
       return false;
     }
     $terminals_json_file_dir = _PS_MODULE_DIR_ . $this->name . "/locations/locations_" . $country . ".json";
@@ -1171,10 +1214,9 @@ class ItellaShipping extends CarrierModule
    */
   public function isLocation($id, $country = false)
   {
-    $available = array('LT', 'LV', 'EE', 'FI');
     // if false search all available
     if (!$country) {
-      $country = $available;
+      $country = $this->available_countries;
     }
 
     if (!is_array($country)) {
@@ -1182,7 +1224,7 @@ class ItellaShipping extends CarrierModule
     }
 
     foreach ($country as $code) {
-      if (!in_array(strtoupper($code), $available)) {
+      if (!in_array(strtoupper($code), $this->available_countries)) {
         continue;
       }
       $locations = json_decode($this->loadItellaLocations($code), true);
@@ -1204,6 +1246,25 @@ class ItellaShipping extends CarrierModule
       if ($id_carrier_old == (int) (Configuration::get($key)))
         Configuration::updateValue($key, $id_carrier_new);
     }
+  }
+
+  public function hookActionGetExtraMailTemplateVars($params)
+  {
+    if ($params['template'] != 'shipped') {
+        return null;
+    }
+
+    $orderID = $params['template_vars']['{id_order}'];
+    $order = new Order((int)$orderID);
+    $carrier = new Carrier($order->id_carrier, $order->id_lang);
+
+    $params['extra_template_vars'] = array_merge(
+      $params['extra_template_vars'], 
+      array(
+        '{followup}' => str_replace('@', $order->shipping_number, $carrier->url),
+        '{tracking_url}' => $carrier->url,
+        '{tracking_code}' => $order->shipping_number
+    ));
   }
 
   public function hookHeader($params)
@@ -1353,7 +1414,7 @@ class ItellaShipping extends CarrierModule
     if (version_compare(_PS_VERSION_, '1.7', '>=')) {
       if (Tools::getValue('configure') == $this->name || Tools::getValue('controller') == 'AdminOrders') {
         Media::addJsDef(array(
-          'itellaMassLabelTitle' => $this->l("Print Itella labels"),
+          'itellaMassLabelTitle' => $this->l("Print Smartpost labels"),
           'itellaNoOrdersWarn' => $this->l("No orders selected"),
           'itellaMassLabelUrl' => self::useHttps($this->context->link->getModuleLink($this->name, "ajax", array("action" => "massgenlabel")))
         ));
@@ -1368,7 +1429,7 @@ class ItellaShipping extends CarrierModule
       return '
         <script type="text/javascript">
           var itellaNoOrdersWarn = "' . $this->l("No orders selected") . '";
-          var itellaMassLabelTitle = "' . $this->l("Print Itella labels") . '";
+          var itellaMassLabelTitle = "' . $this->l("Print Smartpost labels") . '";
           var itellaMassLabelUrl = "' . self::useHttps($this->context->link->getModuleLink($this->name, "ajax", array("action" => "massgenlabel"))) . '";
         </script>
         <script type="text/javascript" src="' . (__PS_BASE_URI__) . 'modules/' . $this->name . '/views/js/itella_admin.js"></script>
@@ -1474,7 +1535,7 @@ class ItellaShipping extends CarrierModule
       Configuration::updateGlobalValue('ITELLA_LAST_UPDATE', time());
       $loc = new \Mijora\Itella\Locations\PickupPoints('https://locationservice.posti.com/api/2/location');
 
-      foreach (array('LT', 'LV', 'EE', 'FI') as $country) {
+      foreach ($this->available_countries as $country) {
         $itellaLoc = $loc->getLocationsByCountry($country);
         $loc->saveLocationsToJSONFile($dir . 'locations_' . $country . '.json', json_encode($itellaLoc));
       }
@@ -1483,7 +1544,7 @@ class ItellaShipping extends CarrierModule
 
   private function locationsFilesExist($dir)
   {
-    foreach (array('LT', 'LV', 'EE', 'FI') as $country) {
+    foreach ($this->available_countries as $country) {
       if (!is_file($dir . 'locations_' . $country . '.json')) {
         return false;
       }

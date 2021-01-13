@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.1.6] - Unreleased
+### Fixed
+- tracking number save
+
+### Improved
+- programic code
+- created an order status change when a label is generated
+- created ability to add tracking number to email template using {tracking_code} or tracking url using {tracking_url}
+
+### Changed
+- name "Itella" to "Smartpost"
+
+### Updated
+- translations
+
 ## [1.1.5] - 2020-12-14
 ### Changed
 - Module now sends "Call Courier" email using Prestashop mailing functionality.

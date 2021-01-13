@@ -2,8 +2,8 @@
   <div class="col-lg-6 col-md-6 col-xs-12 panel">
 
     <div class="panel-heading">
-      <img src="{$module_dir}logo.png" class="itella-logo" alt="Itella Logo">
-        {l s='Itella Shipping' mod='itellashipping'}
+      <img src="{$module_dir}logo.png" class="itella-logo" alt="Smartpost Logo">
+        {l s='Smartpost Shipping' mod='itellashipping'}
     </div>
 
     {if $itella_error}
@@ -388,6 +388,7 @@ console.log('label',itella_label);
             console.log(res);
             showResponse(res.success, 'success');
             itella_label = true;
+            location.reload();
           }
         },
         complete: function(jqXHR, status) {
