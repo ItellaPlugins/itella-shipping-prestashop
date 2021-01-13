@@ -35,7 +35,7 @@ class ItellaShipping extends CarrierModule
     'OrderConfirmation',
 
     'displayBeforeCarrier',
-
+    'actionGetExtraMailTemplateVars',
     'actionCarrierProcess',
     'orderDetailDisplayed',
     'actionValidateStepComplete'
@@ -1246,6 +1246,25 @@ class ItellaShipping extends CarrierModule
       if ($id_carrier_old == (int) (Configuration::get($key)))
         Configuration::updateValue($key, $id_carrier_new);
     }
+  }
+
+  public function hookActionGetExtraMailTemplateVars($params)
+  {
+    if ($params['template'] != 'shipped') {
+        return null;
+    }
+
+    $orderID = $params['template_vars']['{id_order}'];
+    $order = new Order((int)$orderID);
+    $carrier = new Carrier($order->id_carrier, $order->id_lang);
+
+    $params['extra_template_vars'] = array_merge(
+      $params['extra_template_vars'], 
+      array(
+        '{followup}' => str_replace('@', $order->shipping_number, $carrier->url),
+        '{url_traking}' => $carrier->url,
+        '{shipping_number}' => $order->shipping_number
+    ));
   }
 
   public function hookHeader($params)
