@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.1.6] - Unreleased
+## [1.2.0] - 2021-01-20
 ### Fixed
 - tracking number save
 
@@ -14,6 +14,7 @@
 
 ### Updated
 - translations
+- itella-api to v2.3.0
 
 ## [1.1.5] - 2020-12-14
 ### Changed
