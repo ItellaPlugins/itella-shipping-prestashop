@@ -74,6 +74,26 @@ class ItellaManifest extends ObjectModel
     return $pdf;
   }
 
+  public function getManifestItems()
+  {
+    $sql = '
+      SELECT * FROM `' . _DB_PREFIX_ . 'itella_cart` ic
+      WHERE id_itella_manifest = ' . $this->id_itella_manifest;
+    $result = DB::getInstance()->executeS($sql);
+
+    $items = array();
+    foreach ($result as $row) {
+      $items[] = array(
+        'tracking_number' => implode(' ', explode(',', $row['label_number'])),
+        'amount' => $row['packs'],
+        'weight' => $row['weight'],
+        'delivery_address' => $this->generateDeliveryAddress($row)
+      );
+    }
+
+    return $items;
+  }
+
   public function printPdf()
   {
     $pdf = $this->buildManifest();
