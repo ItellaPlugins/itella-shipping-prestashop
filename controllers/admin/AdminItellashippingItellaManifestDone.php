@@ -185,11 +185,15 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
           ->setSubject(Configuration::get('ITELLA_CALL_EMAIL_SUBJECT'))
           ->setPickUpAddress(array(
             'sender' => Configuration::get('ITELLA_SENDER_NAME'),
-            'address' => $storeObj->getFormatedAddress(),
+            'address_1' => $storeObj->address,
+            'postcode' => $storeObj->postcode,
+            'city' => $storeObj->city,
+            'country' => $storeObj->country_code,
             //'pickup_time' => $storeObj->pick_start . ' - ' . $storeObj->pick_finish,
             'contact_phone' => $storeObj->phone,
           ))
           ->setAttachment(true)
+          ->setItems($manifest->getManifestItems())
           ->buildMailBody();
 
         $data = array(
