@@ -252,6 +252,10 @@ class ItellashippingAjaxModuleFrontController extends ModuleFrontController
         ->addAdditionalServices($extra) // set additional services
         ->addGoodsItems($items);
 
+      if (isset($data['comment']) && !empty($data['comment'])) {
+        $shipment->setComment($data['comment']);
+      }
+
       if ($product_code == Shipment::PRODUCT_PICKUP) {
         $shipment->setPickupPoint($data['id_pickup_point']);
       }
@@ -280,6 +284,7 @@ class ItellashippingAjaxModuleFrontController extends ModuleFrontController
 
     $itellaCart = new ItellaCart();
     $result = $itellaCart->updateItellaCart();
+    
     // update order carrier
     if (!isset($result['errors'])) {
       // check that carrier hasnt changed
@@ -300,6 +305,7 @@ class ItellashippingAjaxModuleFrontController extends ModuleFrontController
         $order_carrier->update();
         // Only prestashop 1.7 has carrier change functionality
         if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+          $this->context->currency = $this->context->currency ?? new Currency(Configuration::get('PS_CURRENCY_DEFAULT'));
           $order->refreshShippingCost();
         }
         $order->update();

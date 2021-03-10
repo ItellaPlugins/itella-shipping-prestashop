@@ -1,5 +1,19 @@
 # Changelog
 
+## [Unreleased] -
+### Added
+- Settings to switch terminal selector type (can be Map or dropdown with search)
+- Shipment comment field in Itella form inside order (this will appear in shipment label)
+- Support for Prestashop 1.7.7
+
+### Fixed
+- Release version not being set in main file
+- Possibly fixed an issue where in quick-order module would not receive correct token after customer logins inside checkout
+- Order status changing functions now correctly set as static
+
+### Updated
+- itella-api to v2.3.2
+
 ## [1.2.1] - 2021-02-01
 ### Updated
 - itella-api to v2.3.1

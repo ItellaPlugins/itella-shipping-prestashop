@@ -10,6 +10,9 @@ class ItellaShipping extends CarrierModule
   const CONTROLLER_MANIFEST = 'AdminItellashippingItellaManifest';
   const CONTROLLER_MANIFEST_DONE = 'AdminItellashippingItellaManifestDone';
 
+  const SELECTOR_MAP = 0;
+  const SELECTOR_DROPDOWN = 1;
+
   private static $_name = 'itellashipping';
   private static $_classMap = array(
     'ItellaCart' => 'classes/ItellaCart.php',
@@ -79,7 +82,7 @@ class ItellaShipping extends CarrierModule
   {
     $this->name = self::$_name;
     $this->tab = 'shipping_logistics';
-    $this->version = '1.2.1';
+    $this->version = '1.2.2';
     $this->author = 'Mijora.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.8');
@@ -161,7 +164,7 @@ class ItellaShipping extends CarrierModule
     }
 
     //install of custom state
-    $this->getCustomOrderState();
+    ItellaShipping::getCustomOrderState();
 
     // set defaults
     Configuration::updateValue('ITELLA_CALL_EMAIL_SUBJECT', 'E-com order booking');
@@ -170,7 +173,7 @@ class ItellaShipping extends CarrierModule
     return true;
   }
 
-  public function getCustomOrderState()
+  public static function getCustomOrderState()
   {
     $order_state = (int)Configuration::get('itella_order_state');
     $order_status = new OrderState((int)$order_state, (int)Context::getContext()->language->id);
@@ -199,7 +202,7 @@ class ItellaShipping extends CarrierModule
     return $order_state;
   }
 
-  public function changeOrderStatus($id_order, $status)
+  public static function changeOrderStatus($id_order, $status)
   {
     $order = new Order((int)$id_order);
     if ($order->current_state != $status)
@@ -319,6 +322,7 @@ class ItellaShipping extends CarrierModule
         `id_pickup_point` varchar(30) COLLATE utf8_unicode_ci DEFAULT NULL,
         `label_number` text COLLATE utf8_unicode_ci NULL,
         `error` text COLLATE utf8_unicode_ci DEFAULT NULL,
+        `comment` text COLLATE utf8_unicode_ci DEFAULT NULL,
         `id_itella_manifest` int(10) unsigned DEFAULT NULL,
         PRIMARY KEY (`id_cart`)
       ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;',
@@ -662,6 +666,7 @@ class ItellaShipping extends CarrierModule
         Configuration::updateValue($key, $value);
       }
       Configuration::updateValue('ITELLA_CALL_EMAIL_SUBJECT', strval(Tools::getValue('ITELLA_CALL_EMAIL_SUBJECT')));
+      Configuration::updateValue('ITELLA_SELECTOR_TYPE', (int) Tools::getValue('ITELLA_SELECTOR_TYPE'));
       $output .= $this->displayConfirmation($this->l('Advanced settings updated'));
     }
 
@@ -1103,12 +1108,39 @@ class ItellaShipping extends CarrierModule
     // Get default language
     $defaultLang = (int) Configuration::get('PS_LANG_DEFAULT');
 
+    $selector_values = array(
+      array(
+        'id_option' => self::SELECTOR_MAP,
+        'name' => 'Map'
+      ),
+      array(
+        'id_option' => self::SELECTOR_DROPDOWN,
+        'name' => 'Select with search'
+      )
+    );
+
     // Init Fields form array
     $fieldsForm[0]['form'] = [
       'legend' => array(
         'title' => $this->l('Advanced Settings'),
       ),
       'input' => array(
+        array(
+          'type' => 'select',
+          'label' => $this->l('Terminal selector type'),
+          'name' => 'ITELLA_SELECTOR_TYPE',
+          'options' => array(
+            'query' => $selector_values,
+            'id' => 'id_option',
+            'name' => 'name'
+          )
+        ),
+        array(
+          'type' => 'html',
+          //'label' => $this->l('Last update time:'),
+          'name' => 'itella_separator_html',
+          'html_content' => '<h3>&nbsp;</h3>',
+        ),
         array(
           'type' => 'text',
           'label' => $this->l('Smartpost email subject'),
@@ -1172,6 +1204,7 @@ class ItellaShipping extends CarrierModule
       $helper->fields_value[$key] = Configuration::get($key);
     }
     $helper->fields_value['ITELLA_CALL_EMAIL_SUBJECT'] = Configuration::get('ITELLA_CALL_EMAIL_SUBJECT');
+    $helper->fields_value['ITELLA_SELECTOR_TYPE'] = Configuration::get('ITELLA_SELECTOR_TYPE');
 
     return $helper->generateForm($fieldsForm);
   }
@@ -1273,7 +1306,7 @@ class ItellaShipping extends CarrierModule
       return;
 
     if (in_array($this->context->controller->php_self, array('order', 'order-opc'))) {
-
+      $selector_type = (int) Configuration::get('ITELLA_SELECTOR_TYPE');
       Media::addJsDef(array(
         'itella_ps_version' => implode('.', explode('.', _PS_VERSION_, -2)),
         'itella_carrier_courier_id' => Configuration::get('ITELLA_COURIER_ID'),
@@ -1281,6 +1314,7 @@ class ItellaShipping extends CarrierModule
         'itella_controller_url' => $this->context->link->getModuleLink('itellashipping', 'front'),
         'itella_token' => Tools::getToken(false),
         'itella_images_url' => $this->_path . 'views/images/',
+        'itella_selector_type' => $selector_type,
         'itella_translation' => json_encode(array(
           'modal_header' => $this->l('Pickup points'),
           'selector_header' => $this->l('Pickup point'),
@@ -1299,21 +1333,26 @@ class ItellaShipping extends CarrierModule
         ))
       ));
       if (version_compare(_PS_VERSION_, '1.7.0', '>=')) {
-        $this->context->controller->registerStylesheet('modules-itella-leaflet-css', 'modules/' . $this->name . '/views/css/leaflet.css');
-        $this->context->controller->registerStylesheet('modules-itella-MarkerCluster-css', 'modules/' . $this->name . '/views/css/MarkerCluster.css');
-        $this->context->controller->registerStylesheet('modules-itella-MarkerCluster.Default-css', 'modules/' . $this->name . '/views/css/MarkerCluster.Default.css');
+        if ($selector_type === 0) {
+          $this->context->controller->registerStylesheet('modules-itella-leaflet-css', 'modules/' . $this->name . '/views/css/leaflet.css');
+          $this->context->controller->registerStylesheet('modules-itella-MarkerCluster-css', 'modules/' . $this->name . '/views/css/MarkerCluster.css');
+          $this->context->controller->registerStylesheet('modules-itella-MarkerCluster.Default-css', 'modules/' . $this->name . '/views/css/MarkerCluster.Default.css');
+          $this->context->controller->registerJavascript('modules-itella-leaflet-js', 'modules/' . $this->name . '/views/js/leaflet.js');
+        }
+
         $this->context->controller->registerStylesheet('modules-itella-css', 'modules/' . $this->name . '/views/css/itella-mapping.css');
         $this->context->controller->registerStylesheet('modules-itella-custom-css', 'modules/' . $this->name . '/views/css/custom.css');
-        $this->context->controller->registerJavascript('modules-itella-leaflet-js', 'modules/' . $this->name . '/views/js/leaflet.js');
         $this->context->controller->registerJavascript('modules-itella-mapping-js', 'modules/' . $this->name . '/views/js/itella-mapping.js');
         $this->context->controller->registerJavascript('modules-itella-front-js', 'modules/' . $this->name . '/views/js/front.js');
       } else {
-        $this->context->controller->addCSS($this->_path . 'views/css/leaflet.css');
-        $this->context->controller->addCSS($this->_path . 'views/css/MarkerCluster.css');
-        $this->context->controller->addCSS($this->_path . 'views/css/MarkerCluster.Default.css');
+        if ($selector_type === 0) {
+          $this->context->controller->addCSS($this->_path . 'views/css/leaflet.css');
+          $this->context->controller->addCSS($this->_path . 'views/css/MarkerCluster.css');
+          $this->context->controller->addCSS($this->_path . 'views/css/MarkerCluster.Default.css');
+          $this->context->controller->addJS($this->_path . 'views/js/leaflet.js');
+        }
         $this->context->controller->addCSS($this->_path . 'views/css/itella-mapping.css');
         $this->context->controller->addCSS($this->_path . 'views/css/custom.css');
-        $this->context->controller->addJS($this->_path . 'views/js/leaflet.js');
         $this->context->controller->addJS($this->_path . 'views/js/itella-mapping.js');
         $this->context->controller->addJS($this->_path . 'views/js/front.js');
       }
@@ -1332,7 +1371,6 @@ class ItellaShipping extends CarrierModule
 
   public function hookDisplayCarrierExtraContent($params)
   {
-
     if (version_compare(_PS_VERSION_, '1.7', '>=')) {
       $id_carrier = $params['carrier']['id'];
       $template = 'views/templates/hook/pickup.tpl';
@@ -1518,6 +1556,11 @@ class ItellaShipping extends CarrierModule
       'itella_print_label_url' => $this->context->link->getModuleLink($this->name, 'ajax', array('action' => 'printLabel', 'id_order' => $order->id, 'token' => Tools::getToken())),
     ));
 
+    if (version_compare(_PS_VERSION_, '1.7.7', '>=')) {
+      return $this->display(__FILE__, 'views/templates/admin/blockinorder_1_7_7.tpl');
+    }
+
+    // 1.7.6 and bellow as well 1.6
     return $this->display(__FILE__, 'views/templates/admin/blockinorder.tpl');
   }
 
