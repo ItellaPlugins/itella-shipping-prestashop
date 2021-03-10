@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased] -
+## [1.2.2] - Prestashop 1.7.7 support
 ### Added
 - Settings to switch terminal selector type (can be Map or dropdown with search)
 - Shipment comment field in Itella form inside order (this will appear in shipment label)
