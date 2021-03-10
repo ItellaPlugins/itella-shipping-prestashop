@@ -1,5 +1,9 @@
 # Changelog
 
+## [2.3.2] - Label comment
+### Added
+- Added `setComment()` function to Shipment class. This sets a comment that will be displayed on label
+
 ## [2.3.1] - Address splitting
 ### Changed
 - divided sender address into different parameters
