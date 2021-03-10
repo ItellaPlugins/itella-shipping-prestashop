@@ -74,6 +74,7 @@ class ItellaCart
     $is_pickup = Tools::getValue('is_pickup', NULL);
     $id_pickup_point = Tools::getValue('id_pickup_point', NULL);
     $itella_extra = Tools::getValue('itella_extra', NULL);
+    $itella_comment = Tools::getValue('itella_comment', NULL);
 
     $weight = str_replace(',', '.', $weight);
     $volume = str_replace(',', '.', $volume);
@@ -112,7 +113,7 @@ class ItellaCart
     if (!empty($errors)) {
       return array('errors' => $errors);
     }
-
+ 
     $cart = array(
       'packs' => $is_pickup == 0 ? pSQL($packs) : 1,
       'weight' => pSQL($weight),
@@ -125,6 +126,7 @@ class ItellaCart
       'is_call_before_delivery' => 0,
       'is_fragile' => 0,
       'error' => NULL,
+      'comment' => pSQL($itella_comment),
       'id_itella_manifest' => NULL
     );
 
@@ -151,9 +153,11 @@ class ItellaCart
     if (!$result) {
       return array('errors' => array($this->module->l('Failed to add/edit ItellaCart table', 'ItellaCart')), 'data' => $cart, 'id_order' => $id_order);
     }
+    
     // reset tracking number in presta order
     $order = new Order((int) $id_order);
     $order->setWsShippingNumber('');
+
     return array('success' => $this->module->l('ItellaCart information updated', 'ItellaCart'), 'data' => $cart, 'id_order' => $id_order, 'id_cart' => $id_cart);
   }
 
@@ -266,6 +270,10 @@ class ItellaCart
         ->setReceiverParty($receiver) // Receiver class object
         ->addAdditionalServices($extra) // set additional services
         ->addGoodsItems($items);
+      
+      if (isset($data['comment']) && !empty($data['comment'])) {
+        $shipment->setComment($data['comment']);
+      }
 
       if ($product_code == Shipment::PRODUCT_PICKUP) {
         $shipment->setPickupPoint($data['id_pickup_point']);

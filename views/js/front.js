@@ -5,6 +5,12 @@ var ItellaModule = new function () {
     if (typeof window.opc == 'undefined') {
       window.opc = false;
     }
+    let map_enabled = true;
+    if (typeof window.itella_selector_type !== 'undefined') {
+      if (itella_selector_type === 1) {
+        map_enabled = false;
+      }
+    }
     self.initHooks();
     self.checkPlacement();
     var itellaEl = document.getElementById('itella-extra');
@@ -14,24 +20,43 @@ var ItellaModule = new function () {
       .setImagesUrl(itella_images_url)
       .setStrings(JSON.parse(itella_translation))
       .setCountry(itella_country);
-    itella.init();
+    itella.init(map_enabled);
     terminals = itella_locations;
     itella.setLocations(terminals, true);
     itella.registerCallback(function (manual) {
       console.log(this.selectedPoint);
+      if (!manual) {
+        return;
+      }
+
+      // make sure radio is checked
+      let radio = document.querySelector("input[name*='delivery_option['][value*='" + itella_carrier_pickup_id + ",']");
+      if (radio) {
+        radio.checked = true;
+      }
+
+      // collect data
       var ajaxData = {};
       ajaxData.selected_id = this.selectedPoint.pupCode;
       ajaxData.carrier_id = $("input[name*='delivery_option[']:checked").val().split(',')[0];
-      ajaxData.itella_token = itella_token;
-
-      if (manual) {
-        $.ajax(itella_controller_url,
-          {
-            data: ajaxData,
-            type: "POST",
-            dataType: "json",
-          });
+      let _token = null;
+      if (typeof prestashop !== 'undefined') {
+        // prestashop 1.7+
+        _token = prestashop.static_token;
+      } else {
+        _token = static_token; // prestashop 1.6
       }
+      ajaxData.itella_token = _token ? _token : itella_token;
+
+      $.ajax(itella_controller_url,
+        {
+          data: ajaxData,
+          type: "POST",
+          dataType: "json",
+      })
+      .always(function (jqXHR, status) {
+        jQuery(radio).trigger('change');
+      });
 
       $('#itella_pickup_point_id').val(this.selectedPoint.id);
       self.validate(null, $("input[name*='delivery_option[']:checked"));

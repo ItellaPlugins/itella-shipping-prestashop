@@ -135,6 +135,18 @@
         </div>
       </div>
 
+      <div class="row">
+        <div class="col-md-12">
+          <div class="field-row">
+            <span>{l s="Comment" mod='itellashipping'}:</span>
+            <span>
+              <input type="text"
+                    name="itella_comment" value="{if $orderItellaCartInfo.comment}{$orderItellaCartInfo.comment}{/if}" />
+            </span>
+          </div>
+        </div>
+      </div>
+
     </form>
     <div class="response alert">
     </div>
