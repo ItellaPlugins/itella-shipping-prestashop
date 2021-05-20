@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.3] - Admin AJAX
+### Changed
+- Admin AJAX calls are now done through module controller, this should fix cross origin issues with multishop having different URL's
+
 ## [1.2.2] - Prestashop 1.7.7 support
 ### Added
 - Settings to switch terminal selector type (can be Map or dropdown with search)
