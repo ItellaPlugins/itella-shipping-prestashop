@@ -9,6 +9,7 @@ class ItellaShipping extends CarrierModule
   const CONTROLLER_STORES = 'AdminItellashippingItellaStore';
   const CONTROLLER_MANIFEST = 'AdminItellashippingItellaManifest';
   const CONTROLLER_MANIFEST_DONE = 'AdminItellashippingItellaManifestDone';
+  const CONTROLLER_ADMIN_AJAX = 'AdminItellashippingAjax';
 
   const SELECTOR_MAP = 0;
   const SELECTOR_DROPDOWN = 1;
@@ -82,7 +83,7 @@ class ItellaShipping extends CarrierModule
   {
     $this->name = self::$_name;
     $this->tab = 'shipping_logistics';
-    $this->version = '1.2.2';
+    $this->version = '1.2.3';
     $this->author = 'Mijora.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.8');
@@ -233,6 +234,10 @@ class ItellaShipping extends CarrierModule
       ),
       self::CONTROLLER_MANIFEST_DONE => array(
         'title' => $this->l('Smartpost generated manifests'),
+        'parent_tab' => -1
+      ),
+      self::CONTROLLER_ADMIN_AJAX => array(
+        'title' => $this->l('ItellaAdminAjax'),
         'parent_tab' => -1
       )
     );
@@ -1537,6 +1542,16 @@ class ItellaShipping extends CarrierModule
       return ($a['address']['municipality'] < $b['address']['municipality']) ? -1 : 1;
     });
 
+    if (version_compare(_PS_VERSION_, '1.7', '>=')) {
+      $itella_module_url = $this->context->link->getAdminLink('AdminItellashippingAjax', true, [], array('action' => 'savecart'));
+      $itella_generate_label_url = $this->context->link->getAdminLink('AdminItellashippingAjax', true, [], array('action' => 'genlabel', 'id_order' => $order->id));
+      $itella_print_label_url = $this->context->link->getAdminLink('AdminItellashippingAjax', true, [], array('action' => 'printLabel', 'id_order' => $order->id));
+    } else {
+      $itella_module_url = $this->context->link->getAdminLink('AdminItellashippingAjax', true) . '&action=savecart';
+      $itella_generate_label_url = $this->context->link->getAdminLink('AdminItellashippingAjax', true) . '&action=genlabel&id_order=' . $order->id;
+      $itella_print_label_url = $this->context->link->getAdminLink('AdminItellashippingAjax', true) . '&action=printLabel&id_order=' . $order->id;
+    }
+
     $this->smarty->assign(array(
       'itella_params' => json_encode(array(
         'order_car' => $carrier->id_reference,
@@ -1551,9 +1566,9 @@ class ItellaShipping extends CarrierModule
       'cod_amount' => $order->total_paid_tax_incl,
       'itella_error' => ($itella_cart_info['error'] != '' ? $this->displayError($itella_cart_info['error']) : false),
       'itella_pickup_points' => $pickup_points,
-      'itella_module_url' => $this->context->link->getModuleLink($this->name, 'ajax', array('action' => 'savecart')),
-      'itella_generate_label_url' => $this->context->link->getModuleLink($this->name, 'ajax', array('action' => 'genlabel', 'id_order' => $order->id, 'token' => Tools::getToken())),
-      'itella_print_label_url' => $this->context->link->getModuleLink($this->name, 'ajax', array('action' => 'printLabel', 'id_order' => $order->id, 'token' => Tools::getToken())),
+      'itella_module_url' => $itella_module_url,
+      'itella_generate_label_url' => $itella_generate_label_url,
+      'itella_print_label_url' => $itella_print_label_url,
     ));
 
     if (version_compare(_PS_VERSION_, '1.7.7', '>=')) {
