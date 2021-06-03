@@ -69,7 +69,7 @@ var ItellaModule = new function () {
 
   this.checkPlacement = function () {
     if (itella_ps_version == 1.6) {
-      var $master_container = $("input[name*='delivery_option['][value*='" + itella_carrier_pickup_id + ",']").closest('td').next().next();
+      var $master_container = $("input[name^='delivery_option['][value^='" + itella_carrier_pickup_id + ",']").closest('td').next().next();
       $master_container.find('#itella-extra').remove();
       var $itella_extra = $('#itella-extra');
       if ($master_container.find('#itella-extra').length == 0) {
@@ -79,7 +79,7 @@ var ItellaModule = new function () {
     }
 
     if (itella_ps_version >= 1.7) {
-      var $master_container = $("input[name*='delivery_option['][value*='" + itella_carrier_pickup_id + ",']").closest('.delivery-option').find('label');
+      var $master_container = $("input[name^='delivery_option['][value^='" + itella_carrier_pickup_id + ",']").closest('.delivery-option').find('label');
       $master_container.find('#itella-ps17-extra').remove();
       var $itella_extra = $('#itella-ps17-extra');
       if ($master_container.find('#itella-ps17-extra').length == 0) {
@@ -92,14 +92,14 @@ var ItellaModule = new function () {
   this.initHooks = function () {
     // assume 1.7 and up will be same
     if (itella_ps_version >= 1.7) {
-      $('form#js-delivery input[type="radio"][name*="delivery_option["]').on('click', function (e) {
+      $('form#js-delivery input[type="radio"][name^="delivery_option["]').on('click', function (e) {
         self.validate(e, this);
       });
     } else {
       // using 1.6 version
-      $(document).on('click', '[name*="delivery_option["]', function (e) {
-        if ($("input[name*='delivery_option[']:checked").val().split(',')[0] != itella_carrier_pickup_id) {
-          $("input[name*='delivery_option['][value*='" + itella_carrier_pickup_id + ",']").closest('tr')
+      $(document).on('click', '[name^="delivery_option["]', function (e) {
+        if ($("input[name^='delivery_option[']:checked").val().split(',')[0] != itella_carrier_pickup_id) {
+          $("input[name^='delivery_option['][value*='" + itella_carrier_pickup_id + ",']").closest('tr')
             .find('#itella-extra').remove();
         }
       });
@@ -132,7 +132,7 @@ var ItellaModule = new function () {
   }
 
   this.validate = function (event, el) {
-    var selected_id = $("input[name*='delivery_option[']:checked").val().split(',')[0];
+    var selected_id = $("input[name^='delivery_option[']:checked").val().split(',')[0];
     var itella_selection = $('#itella_pickup_point_id').val();
 
     if (itella_ps_version >= 1.7) {
