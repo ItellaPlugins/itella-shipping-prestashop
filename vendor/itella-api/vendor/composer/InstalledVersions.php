@@ -24,8 +24,8 @@ class InstalledVersions
 private static $installed = array (
   'root' => 
   array (
-    'pretty_version' => '2.3.2',
-    'version' => '2.3.2.0',
+    'pretty_version' => '2.3.3',
+    'version' => '2.3.3.0',
     'aliases' => 
     array (
     ),
@@ -36,8 +36,8 @@ private static $installed = array (
   array (
     'mijora/itella-api' => 
     array (
-      'pretty_version' => '2.3.2',
-      'version' => '2.3.2.0',
+      'pretty_version' => '2.3.3',
+      'version' => '2.3.3.0',
       'aliases' => 
       array (
       ),

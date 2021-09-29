@@ -1,5 +1,20 @@
 # Changelog
 
+## [2.3.4] - COD Service for Pickup Point type of shipment
+### Added
+- For product (2711) it is now allowed to set COD additional service (3101)
+
+## [2.3.3] - FI pickupoints
+### Changed
+- PickupPoints for country FI wont filter out type PICKUPPOINT
+
+### Added
+- Function to disable phone fixing on Party class. Functions `disablePhoneCheck` and `enablePhoneCheck`.
+**NOTE:** Disabling phone checking still checks that phone format matches international.
+
+### Updated
+- setasign/fpdi updated to v2.3.6
+
 ## [2.3.2] - Label comment
 ### Added
 - Added `setComment()` function to Shipment class. This sets a comment that will be displayed on label

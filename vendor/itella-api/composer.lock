@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fac7cde81bc43795f8f7a481687f6b7c",
+    "content-hash": "cc60ed6c58001fa32a23c7a33568d64b",
     "packages": [
         {
             "name": "pakettikauppa/api-library",
