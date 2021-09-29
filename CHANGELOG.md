@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.4] - COD Support on Pickuppoint shipment
+### Added
+- COD additional service is now supported by pickup shipment (product 2711)
+
+### Updated
+- itella-api to v2.3.4
+
 ## [1.2.3] - Admin AJAX
 ### Changed
 - Admin AJAX calls are now done through module controller, this should fix cross origin issues with multishop having different URL's
