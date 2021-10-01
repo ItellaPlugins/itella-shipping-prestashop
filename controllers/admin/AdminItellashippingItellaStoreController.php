@@ -27,8 +27,6 @@ class AdminItellashippingItellaStoreController extends ModuleAdminController
 
     parent::__construct();
 
-    $this->initList();
-    $this->initForm();
     $this->displayMenu();
   }
 
@@ -136,6 +134,13 @@ class AdminItellashippingItellaStoreController extends ModuleAdminController
     }
   }
 
+  public function renderForm()
+  {
+    $this->initForm();
+
+    return parent::renderForm();
+  }
+
   public function getShopNameById($id)
   {
     $shop = new Shop($id);
@@ -212,6 +217,8 @@ class AdminItellashippingItellaStoreController extends ModuleAdminController
 
   public function renderList()
   {
+    $this->initList();
+
     switch (Shop::getContext()) {
       case Shop::CONTEXT_GROUP:
         $this->_where = ' AND a.`id_shop` IN(' . implode(',', Shop::getContextListShopID()) . ')';
