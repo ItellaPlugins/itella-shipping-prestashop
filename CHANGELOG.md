@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.5] - Store country code fix
+### Fixed
+- Incorrectly displayed country code for store (always showed LT)
+
 ## [1.2.4] - COD Support on Pickuppoint shipment
 ### Added
 - COD additional service is now supported by pickup shipment (product 2711)
