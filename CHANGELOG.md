@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.6] - 2021-11-16 patch
+### Fixed
+- Fixed mismatched token that prevented displaying label registration result
+- Fixed COD always Yes inside order block information
+
 ## [1.2.5] - Store country code fix
 ### Fixed
 - Incorrectly displayed country code for store (always showed LT)

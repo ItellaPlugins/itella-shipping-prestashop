@@ -309,7 +309,7 @@
         });
 
         function toggleCodAmount() {
-            cod_amount.disabled = is_cod.value == '0';
+            cod_amount.disabled = parseInt(is_cod.value) !== 1;
         }
 
         function togglePickupPoints() {
@@ -325,12 +325,8 @@
         function disableExtraServices() { // reset packs to 1
             packs.value = 1;
             $(packs).trigger('change');
-            // COD
-            is_cod.value = 1;
-            $(is_cod).trigger('change');
 
             packs.disabled = true;
-            is_cod.disabled = false;
             is_multi.disabled = true;
 
             $extra_services.hide();
@@ -338,7 +334,6 @@
 
         function enableExtraServices() {
             packs.disabled = false;
-            is_cod.disabled = false;
             is_multi.disabled = false;
             toggleMultiParcel();
             $extra_services.show();
@@ -357,7 +352,7 @@
 
         function saveItellaCart(form_data) {
             form_data.set('ajax', 1);
-            form_data.set('token', '{getAdminToken tab="AdminOrders"}');
+            //form_data.set('token', '{getAdminToken tab="AdminOrders"}');
             form_data.set('id_order', '{$order_id}');
             form_data.set('id_cart', '{$cart_id}');
 
@@ -387,7 +382,7 @@
 
         function generateItellaLabel(form_data) {
             form_data.set('ajax', 1);
-            form_data.set('token', '{getAdminToken tab="AdminOrders"}');
+            //form_data.set('token', '{getAdminToken tab="AdminOrders"}');
             form_data.set('id_order', '{$order_id}');
             form_data.set('id_cart', '{$cart_id}');
             disableButtons();
