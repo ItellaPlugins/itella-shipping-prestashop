@@ -125,10 +125,19 @@ class AdminItellashippingItellaStoreController extends ModuleAdminController
       )
     );
 
-    if (!$this->object) {
+    if (!$this->object || $this->object->id === null) {
+      $country_id = Configuration::get('PS_COUNTRY_DEFAULT');
+      $country = null;
+
+      if ($country_id && $country_id > 0) {
+        $country = new Country($country_id);
+      }
+
+      $country_code = isset($country->iso_code) ? $country->iso_code : self::DEFAULT_COMPANY_COUNTRY_CODE;
+
       $this->fields_value['pick_start'] = self::DEFAULT_PICK_START;
       $this->fields_value['pick_finish'] = self::DEFAULT_PICK_FINISH;
-      $this->fields_value['country_code'] = self::DEFAULT_COMPANY_COUNTRY_CODE;
+      $this->fields_value['country_code'] = $country_code;
       $this->fields_value['id_shop'] = $this->context->shop->id;
       $this->fields_value['active'] = true;
     }
