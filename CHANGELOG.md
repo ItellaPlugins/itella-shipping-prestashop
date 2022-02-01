@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.7] - 2022-02-01
+### Fixed
+- Fixed an issue where id_shop was not assigned during store address creation
+
+### Improved
+- Store address autofills country code with prestashop set country code
+- During store address creation sets as active address by default
+
 ## [1.2.6] - 2021-11-16 patch
 ### Fixed
 - Fixed mismatched token that prevented displaying label registration result
