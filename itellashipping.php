@@ -1310,7 +1310,8 @@ class ItellaShipping extends CarrierModule
     if (!$this->active)
       return;
 
-    if (in_array($this->context->controller->php_self, array('order', 'order-opc'))) {
+    $controller_name = $this->context->controller->php_self ?? $this->context->controller->page_name;
+    if (in_array($controller_name, array('order', 'order-opc', 'module-steasycheckout-default'))) {
       $selector_type = (int) Configuration::get('ITELLA_SELECTOR_TYPE');
       Media::addJsDef(array(
         'itella_ps_version' => implode('.', explode('.', _PS_VERSION_, -2)),
@@ -1376,9 +1377,14 @@ class ItellaShipping extends CarrierModule
 
   public function hookDisplayCarrierExtraContent($params)
   {
+    $controller_name = $this->context->controller->php_self ?? $this->context->controller->page_name;
+
     if (version_compare(_PS_VERSION_, '1.7', '>=')) {
       $id_carrier = $params['carrier']['id'];
       $template = 'views/templates/hook/pickup.tpl';
+      if ($controller_name === 'module-steasycheckout-default') {
+          $template = 'views/templates/hook/steasy_checkout.tpl';
+      }
     } else {
       $id_carrier = $params['cart']->id_carrier;
       $template = 'views/templates/hook/pickup_16.tpl';

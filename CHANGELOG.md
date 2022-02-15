@@ -1,5 +1,9 @@
 # Changelog
 
+## [UNRELEASED] - 
+### Added
+- Possible support for steasycheckout module (Prestashop 1.7+)
+
 ## [1.2.7] - 2022-02-01
 ### Fixed
 - Fixed an issue where id_shop was not assigned during store address creation
