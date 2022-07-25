@@ -196,6 +196,12 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
           ->setItems($manifest->getManifestItems())
           ->buildMailBody();
 
+        try {
+          $mailer->callApiCourier();
+        } catch (\Exception $e) {
+          // Ignore this
+        }
+
         $data = array(
           '{title}' => Configuration::get('ITELLA_CALL_EMAIL_SUBJECT'),
           '{body}' => $body_html
