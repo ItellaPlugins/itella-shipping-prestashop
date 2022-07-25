@@ -3,6 +3,7 @@
 ## [UNRELEASED] - 
 ### Added
 - Possible support for steasycheckout module (Prestashop 1.7+)
+- Call courier via API
 
 ## [1.2.7] - 2022-02-01
 ### Fixed
