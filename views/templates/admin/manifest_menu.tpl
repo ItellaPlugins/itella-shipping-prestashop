@@ -59,7 +59,7 @@ function create_itella_modal() {
   var confirmModal = $('#itella_modal');
   if (confirmModal.length == 0)
     confirmModal =
-      $('<div class="bootstrap modal hide fade" id="itella_modal">' +
+      $('<div class="bootstrap modal fade" id="itella_modal">' +
         '<div class="modal-dialog">' +
         '<div class="modal-content">' +
         '<div class="modal-header">' +

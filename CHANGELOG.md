@@ -1,5 +1,9 @@
 # Changelog
 
+## [UNRELEASED]
+### Fixed
+- Call courier modal not showing up in some cases
+
 ## [1.2.8] - 2022-07-25
 ### Added
 - Possible support for steasycheckout module (Prestashop 1.7+)
