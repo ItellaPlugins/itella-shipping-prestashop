@@ -1,8 +1,12 @@
 # Changelog
 
-## [UNRELEASED]
+## [1.2.9]
 ### Fixed
-- Call courier modal not showing up in some cases
+- Possible fix for "Call courier" modal not showing up in some cases
+
+### Updated
+- itella-api to v2.3.7
+- logo colors
 
 ## [1.2.8] - 2022-07-25
 ### Added
