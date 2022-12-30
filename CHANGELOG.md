@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.2.10]
+### Fixed
+- Reverted pakettikauppa lib SimpleXMLElement.addChild definition change. Prestashop does not work with php 8+ yet.
+
 ## [1.2.9]
 ### Fixed
 - Possible fix for "Call courier" modal not showing up in some cases
