@@ -106,8 +106,8 @@ class ItellaShipping extends CarrierModule
       // Check if module is configured
       $warning = array();
       if (
-        !in_array((int) (Configuration::get('ITELLA_CARRIER_ID')), $id_carrier_list) &&
-        !in_array((int) (Configuration::get('ITELLA_PICKUP_CARRIER_ID')), $id_carrier_list)
+        !in_array((int) (Configuration::get('ITELLA_COURIER_ID')), $id_carrier_list) &&
+        !in_array((int) (Configuration::get('ITELLA_PICKUP_POINT_ID')), $id_carrier_list)
       ) {
         $warning[] = $this->l('"Smartpost carriers"');
       }
