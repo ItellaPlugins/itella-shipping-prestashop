@@ -2,3 +2,4 @@
 locations/*.json
 pdf/*.pdf
 .idea
+config*.xml
