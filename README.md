@@ -14,8 +14,7 @@ If module used has modifications (customized to work with one page checkout for 
 ## Download and install
 Click the button below to download the module installation file and upload the downloaded file through the "Modules" > "Module manager" > "Upload a module" in the Prestashop administration.
 
-[![Download](https://img.shields.io/badge/dynamic/json.svg?label=download&url=https://api.github.com/repos/ItellaPlugins/itella-shipping-prestashop/releases/latest&query=$.assets[0].name&style=for-the-badge)](https://github.com/ItellaPlugins/itella-shipping-prestashop/releases/latest/download/
-itellashipping.zip)
+[![Download](https://img.shields.io/badge/dynamic/json.svg?label=download&url=https://api.github.com/repos/ItellaPlugins/itella-shipping-prestashop/releases/latest&query=$.assets[0].name&style=for-the-badge)](https://github.com/ItellaPlugins/itella-shipping-prestashop/releases/latest/download/itellashipping.zip)
 
 ## steasycheckout support requirements!
 In order to validate if terminal is selected, steasycheckout front.js file *MUST* be edited to have additional code.
