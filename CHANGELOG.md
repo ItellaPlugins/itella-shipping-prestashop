@@ -1,9 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [1.2.11]
 ### Fixed
 - Fixed carriers key when checking if they exist
 - Fixed reading of translations
+
+### Changed
+- Changed Locations API URL
 
 ## [1.2.10]
 ### Fixed

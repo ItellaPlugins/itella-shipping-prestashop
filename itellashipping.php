@@ -83,7 +83,7 @@ class ItellaShipping extends CarrierModule
   {
     $this->name = self::$_name;
     $this->tab = 'shipping_logistics';
-    $this->version = '1.2.10';
+    $this->version = '1.2.11';
     $this->author = 'Mijora.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.8');
@@ -1597,7 +1597,7 @@ class ItellaShipping extends CarrierModule
     if ($last_update == 0 || ($last_update + 24 * 3600) < time() || $forced) {
       require_once _PS_MODULE_DIR_ . 'itellashipping/vendor/itella-api/vendor/autoload.php';
       Configuration::updateGlobalValue('ITELLA_LAST_UPDATE', time());
-      $loc = new \Mijora\Itella\Locations\PickupPoints('https://locationservice.posti.com/api/2/location');
+      $loc = new \Mijora\Itella\Locations\PickupPoints('https://delivery.plugins.itella.com/api/locations');
 
       foreach ($this->available_countries as $country) {
         $itellaLoc = $loc->getLocationsByCountry($country);
