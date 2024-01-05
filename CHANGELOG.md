@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Improved
+- Adapted module to work in Prestashop version 8.1
+
 ## [1.2.11]
 ### Fixed
 - Fixed carriers key when checking if they exist
