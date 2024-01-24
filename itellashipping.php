@@ -33,16 +33,18 @@ class ItellaShipping extends CarrierModule
     'displayAdminOrder',
 
     'header',
+    'displayHeader',
     'actionCarrierUpdate', // hookUpdateCarrier
     'DisplayCarrierList',
     'DisplayCarrierExtraContent',
     'OrderConfirmation',
+    'displayOrderConfirmation',
 
     'displayBeforeCarrier',
     'actionGetExtraMailTemplateVars',
     'actionCarrierProcess',
     'orderDetailDisplayed',
-    'actionValidateStepComplete'
+    //'actionValidateStepComplete' //Disabled, because dont have function and throw error in PS 8.1
   );
 
   // For easier access when filling values into form
@@ -83,10 +85,10 @@ class ItellaShipping extends CarrierModule
   {
     $this->name = self::$_name;
     $this->tab = 'shipping_logistics';
-    $this->version = '1.2.11';
+    $this->version = '1.2.12';
     $this->author = 'Mijora.lt';
     $this->need_instance = 0;
-    $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.8');
+    $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
     $this->bootstrap = true;
 
     parent::__construct();
@@ -140,8 +142,6 @@ class ItellaShipping extends CarrierModule
       Shop::setContext(Shop::CONTEXT_ALL);
     }
 
-    $this->registerTabs();
-
     if (
       !parent::install() ||
       !$this->hooks('register') ||
@@ -149,6 +149,8 @@ class ItellaShipping extends CarrierModule
     ) {
       return false;
     }
+
+    $this->registerTabs();
 
     foreach (Language::getLanguages(false) as $lng) {
       if ($lng['iso_code'] == 'lt') {
@@ -1286,6 +1288,11 @@ class ItellaShipping extends CarrierModule
     }
   }
 
+  public function hookActionCarrierProcess($params)
+  {
+    //
+  }
+
   public function hookActionGetExtraMailTemplateVars($params)
   {
     if ($params['template'] != 'shipped') {
@@ -1365,6 +1372,11 @@ class ItellaShipping extends CarrierModule
     }
   }
 
+  public function hookDisplayHeader($params)
+  {
+    return $this->hookHeader($params);
+  }
+
   public function hookDisplayBeforeCarrier($params)
   {
     //
@@ -1435,6 +1447,11 @@ class ItellaShipping extends CarrierModule
 
     // return $this->display(__FILE__, 'confirmation.tpl');
     return '';
+  }
+
+  public function hookDisplayOrderConfirmation($params)
+  {
+    return $this->hookOrderConfirmation($params);
   }
 
   public function hookDisplayOrderDetail($params)
