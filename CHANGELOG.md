@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.2.12]
 ### Improved
 - Adapted module to work in Prestashop version 8.1
 
