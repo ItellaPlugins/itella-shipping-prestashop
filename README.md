@@ -3,6 +3,7 @@
 Supports:
 - Prestashop 1.6
 - Prestashop 1.7
+- Prestashop 8.x
 
 Minimum requirements:
 - PHP 7.0
