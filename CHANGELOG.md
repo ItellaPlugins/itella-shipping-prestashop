@@ -1,5 +1,10 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Fixed block loading crash when getting an error when trying to register a shipment from Itella in the block order view
+- Fixed error with sending an email when the order status is changed to Shipped on PS 8.x
+
 ## [1.2.12]
 ### Improved
 - Adapted module to work in Prestashop version 8.1
