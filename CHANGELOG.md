@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.2.13]
 ### Fixed
 - Fixed block loading crash when getting an error when trying to register a shipment from Itella in the block order view
 - Fixed error with sending an email when the order status is changed to Shipped on PS 8.x
