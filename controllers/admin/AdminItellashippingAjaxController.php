@@ -58,6 +58,7 @@ class AdminItellashippingAjaxController extends ModuleAdminController
         $this->devtest();
         break;
     }
+    die();
   }
 
   protected function devtest()

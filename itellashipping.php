@@ -85,7 +85,7 @@ class ItellaShipping extends CarrierModule
   {
     $this->name = self::$_name;
     $this->tab = 'shipping_logistics';
-    $this->version = '1.2.12';
+    $this->version = '1.2.13';
     $this->author = 'Mijora.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
@@ -1302,13 +1302,14 @@ class ItellaShipping extends CarrierModule
     $orderID = $params['template_vars']['{id_order}'];
     $order = new Order((int)$orderID);
     $carrier = new Carrier($order->id_carrier, $order->id_lang);
+    $shipping_number = (property_exists($order, 'shipping_number')) ? $order->shipping_number : $order->getWsShippingNumber();
 
     $params['extra_template_vars'] = array_merge(
       $params['extra_template_vars'], 
       array(
-        '{followup}' => str_replace('@', $order->shipping_number, $carrier->url),
+        '{followup}' => str_replace('@', $shipping_number, $carrier->url),
         '{tracking_url}' => $carrier->url,
-        '{tracking_code}' => $order->shipping_number
+        '{tracking_code}' => $shipping_number
     ));
   }
 
