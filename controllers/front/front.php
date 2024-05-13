@@ -8,7 +8,7 @@ class ItellashippingFrontModuleFrontController extends ModuleFrontController
   public function initContent()
   {
     if (Tools::getValue('itella_token') != Tools::getToken(false)) {
-      die(Tools::jsonEncode('BAD TOKEN'));
+      die(json_encode('BAD TOKEN'));
     }
 
     $carrierId = Tools::getValue('carrier_id');
@@ -17,7 +17,7 @@ class ItellashippingFrontModuleFrontController extends ModuleFrontController
       $carrierId != Configuration::get('ITELLA_COURIER_ID') &&
       $carrierId != Configuration::get('ITELLA_PICKUP_POINT_ID')
     ) {
-      die(Tools::jsonEncode('NOT ITELLA SERVICE'));
+      die(json_encode('NOT ITELLA SERVICE'));
     }
 
     $cart = array(
@@ -28,7 +28,7 @@ class ItellashippingFrontModuleFrontController extends ModuleFrontController
     if (
       (!isset($cart['id_pickup_point']) || empty($cart['id_pickup_point']))
     ) {
-      die(Tools::jsonEncode('NO TERMINAL'));
+      die(json_encode('NO TERMINAL'));
     }
 
     if (!Db::getInstance()->getValue("SELECT 1 FROM " . _DB_PREFIX_ . "itella_cart WHERE id_cart = " . pSQL($this->context->cart->id))) {
@@ -38,7 +38,7 @@ class ItellashippingFrontModuleFrontController extends ModuleFrontController
       $result = Db::getInstance()->update('itella_cart', $cart, 'id_cart = ' . pSQL($this->context->cart->id));
     }
 
-    die(Tools::jsonEncode(array(
+    die(json_encode(array(
       'msg' => 'OK', //'cart_data'=>$cart, 'carrier_id'=>$carrierId,
       'savedCarrier' => Configuration::get('ITELLA_PICKUP_POINT_ID'),
       'result' => $result
