@@ -546,8 +546,8 @@ var itellaMapping = /*#__PURE__*/function () {
     }
     /**
      * To work with IE11 we cant use array.find() so this replaces it for our simple usecase
-     * @param {Function} checkFn 
-     * @param {Array} array 
+     * @param {Function} checkFn
+     * @param {Array} array
      */
 
   }, {
@@ -606,6 +606,13 @@ var itellaMapping = /*#__PURE__*/function () {
         var selectedEl = this.UI.container.getElementsByClassName('itella-chosen-point')[0];
         selectedEl.innerText = this.selectedPoint.publicName + ', ' + this.selectedPoint.address.address;
         this.hideEl(this.UI.modal);
+      }
+
+      /* onepagecheckoutps - v4.2.3 - presteamshop */
+      if (typeof OPC !== typeof undefined) {
+        if ($('#btn-placer_order').is(':disabled')) {
+          prestashop.emit('opc-payment-getPaymentList');
+        }
       }
     }
   }, {
@@ -927,7 +934,7 @@ window.itellaRegisterLeafletPlugins = function () {
    * Leaflet-active-area plugin
    * https://github.com/Mappy/Leaflet-active-area
    * License: Apache 2.0
-   * 
+   *
    */
   if (typeof L.Map.prototype.setActiveArea == 'undefined') {
     (function (previousMethods) {
@@ -1370,7 +1377,7 @@ window.itellaRegisterLeafletPlugins = function () {
    * Leaflet.markercluster plugin
    * https://github.com/Leaflet/Leaflet.markercluster
    * License: MIT
-   * 
+   *
    */
 
 
