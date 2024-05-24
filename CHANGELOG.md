@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Disabled orderDetailDisplayed position, because it dont have function
+
 ## [1.2.13]
 ### Fixed
 - Fixed block loading crash when getting an error when trying to register a shipment from Itella in the block order view

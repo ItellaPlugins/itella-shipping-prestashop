@@ -43,7 +43,7 @@ class ItellaShipping extends CarrierModule
     'displayBeforeCarrier',
     'actionGetExtraMailTemplateVars',
     'actionCarrierProcess',
-    'orderDetailDisplayed',
+    //'orderDetailDisplayed', //Disabled, because dont have function and throw error in PS 8.1
     //'actionValidateStepComplete' //Disabled, because dont have function and throw error in PS 8.1
   );
 
