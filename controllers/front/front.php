@@ -31,6 +31,9 @@ class ItellashippingFrontModuleFrontController extends ModuleFrontController
       die(json_encode('NO TERMINAL'));
     }
 
+    // helps to identify that this is new order when managing through admin
+    $cart['is_cod'] = -1;
+
     if (!Db::getInstance()->getValue("SELECT 1 FROM " . _DB_PREFIX_ . "itella_cart WHERE id_cart = " . pSQL($this->context->cart->id))) {
       $cart['id_cart'] = pSQL($this->context->cart->id);
       $result = Db::getInstance()->insert('itella_cart', $cart);
