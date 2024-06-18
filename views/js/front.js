@@ -61,6 +61,16 @@ var ItellaModule = new function () {
       $('#itella_pickup_point_id').val(this.selectedPoint.id);
       self.validate(null, $("input[name*='delivery_option[']:checked"));
     });
+
+    itella.registerCallback(function (manual) {
+      /* onepagecheckoutps - v4.2.3 - presteamshop */
+      if (typeof OPC !== typeof undefined) {
+        if ($('#btn-placer_order').is(':disabled')) {
+          prestashop.emit('opc-payment-getPaymentList');
+        }
+      }
+    });
+
     // set selected pickup point (modal will handle empty values)
     itella.setSelection($('#itella_pickup_point_id').val());
 
