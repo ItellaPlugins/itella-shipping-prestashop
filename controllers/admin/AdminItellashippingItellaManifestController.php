@@ -271,7 +271,7 @@ class AdminItellashippingItellaManifestController extends ModuleAdminController
 
       $itella_cart_info = $itellaCart->getOrderItellaCartInfo($order->id_cart);
 
-      if (!$itella_cart_info) {
+      if (!$itella_cart_info || (int) $itella_cart_info['is_cod'] === -1) {
         $itellaCart->saveOrder($order);
         $saved[] = $id_order;
         // $itella_cart_info = $itellaCart->getOrderItellaCartInfo($order->id_cart);

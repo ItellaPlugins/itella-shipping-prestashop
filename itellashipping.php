@@ -1536,7 +1536,7 @@ class ItellaShipping extends CarrierModule
     $itellaCart = new ItellaCart();
     $itella_cart_info = $itellaCart->getOrderItellaCartInfo($order->id_cart);
 
-    if (!$itella_cart_info) {
+    if (!$itella_cart_info || (int) $itella_cart_info['is_cod'] === -1) {
       $itellaCart->saveOrder($order);
       $itella_cart_info = $itellaCart->getOrderItellaCartInfo($order->id_cart);
     }
@@ -1576,6 +1576,14 @@ class ItellaShipping extends CarrierModule
       $itella_print_label_url = $this->context->link->getAdminLink('AdminItellashippingAjax', true) . '&action=printLabel&id_order=' . $order->id;
     }
 
+    $itella_cod_modules = explode(',', Configuration::get('ITELLA_COD_MODULES'));
+    $is_current_cod = in_array($order->module, $itella_cod_modules);
+
+    $cod_warning = false;
+    if ($is_current_cod !== (bool) $itella_cart_info['is_cod']) {
+      $cod_warning = $this->l('COD Yes/No mismatch! This could happen if COD modules were added later than this order was placed. Please change COD Yes/No and save or ignore this warning if mismatch is intentional');
+    }
+
     $this->smarty->assign(array(
       'itella_params' => json_encode(array(
         'order_car' => $carrier->id_reference,
@@ -1593,6 +1601,10 @@ class ItellaShipping extends CarrierModule
       'itella_module_url' => $itella_module_url,
       'itella_generate_label_url' => $itella_generate_label_url,
       'itella_print_label_url' => $itella_print_label_url,
+      'itella_cod_modules' => $itella_cod_modules,
+      'itella_order' => $order,
+      'itella_cod_warn' => $cod_warning,
+      'itella_cod_warning' => $cod_warning ? $this->displayWarning($cod_warning) : false,
     ));
 
     if (version_compare(_PS_VERSION_, '1.7.7', '>=')) {
