@@ -48,7 +48,13 @@ class ItellaCart
       'id_itella_manifest' => NULL
     );
 
-    $this->db->insert('itella_cart', $cart, true);
+    // make sure if need to insert or update
+    if (!Db::getInstance()->getValue("SELECT 1 FROM " . _DB_PREFIX_ . "itella_cart WHERE id_cart = " . (int) $orderObj->id_cart)) {
+      $this->db->insert('itella_cart', $cart, true, false);
+    } else {
+      unset($cart['id_cart']);
+      $this->db->update('itella_cart', $cart, 'id_cart = ' . (int) $orderObj->id_cart, 0, true, false);
+    }
   }
 
   public function updateCarrier($id_cart, $is_pickup)

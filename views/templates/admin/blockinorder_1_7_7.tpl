@@ -11,6 +11,10 @@
                 {$itella_error}
                 {/if}
 
+                {if isset($itella_cod_warning) && $itella_cod_warning}
+                {$itella_cod_warning}
+                {/if}
+
                 <form action="{$itella_module_url}" method="post" id="itella_order_form">
 
                     <div class="form-row">

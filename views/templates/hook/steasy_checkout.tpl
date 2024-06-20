@@ -13,6 +13,11 @@
 <script>
   var itella_country = JSON.parse('{$itella_send_to nofilter}');
   {literal}
+    var itella_locations_filters = {
+      {/literal}
+      exclude_outdoors: {$filter_outdoors}
+      {literal}
+    };
     ItellaModule.init();
   {/literal}
 </script>
