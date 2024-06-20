@@ -674,6 +674,7 @@ class ItellaShipping extends CarrierModule
       }
       Configuration::updateValue('ITELLA_CALL_EMAIL_SUBJECT', strval(Tools::getValue('ITELLA_CALL_EMAIL_SUBJECT')));
       Configuration::updateValue('ITELLA_SELECTOR_TYPE', (int) Tools::getValue('ITELLA_SELECTOR_TYPE'));
+      Configuration::updateValue('ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS', (int) Tools::getValue('ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS'));
       $output .= $this->displayConfirmation($this->l('Advanced settings updated'));
     }
 
@@ -1134,7 +1135,7 @@ class ItellaShipping extends CarrierModule
       'input' => array(
         array(
           'type' => 'select',
-          'label' => $this->l('Terminal selector type'),
+          'label' => $this->l('Pickup point selector type'),
           'name' => 'ITELLA_SELECTOR_TYPE',
           'options' => array(
             'query' => $selector_values,
@@ -1143,10 +1144,29 @@ class ItellaShipping extends CarrierModule
           )
         ),
         array(
+          'type' => 'switch',
+          'label' => $this->l('Exclude outdoors pickup points'),
+          'name' => 'ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS',
+          'desc' => $this->l('In the Checkout page dont show pickup points that have "Outdoors" parameter'),
+          'is_bool' => true,
+          'values' => array(
+            array(
+              'id' => 'label2_on',
+              'value' => 1,
+              'label' => $this->l('Enabled')
+            ),
+            array(
+              'id' => 'label2_off',
+              'value' => 0,
+              'label' => $this->l('Disabled')
+            )
+          )
+        ),
+        array(
           'type' => 'html',
           //'label' => $this->l('Last update time:'),
           'name' => 'itella_separator_html',
-          'html_content' => '<h3>&nbsp;</h3>',
+          'html_content' => '<hr/>',
         ),
         array(
           'type' => 'text',
@@ -1212,6 +1232,7 @@ class ItellaShipping extends CarrierModule
     }
     $helper->fields_value['ITELLA_CALL_EMAIL_SUBJECT'] = Configuration::get('ITELLA_CALL_EMAIL_SUBJECT');
     $helper->fields_value['ITELLA_SELECTOR_TYPE'] = Configuration::get('ITELLA_SELECTOR_TYPE');
+    $helper->fields_value['ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS'] = Configuration::get('ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS');
 
     return $helper->generateForm($fieldsForm);
   }
@@ -1424,7 +1445,8 @@ class ItellaShipping extends CarrierModule
       array(
         'pickup_points' => $this->loadItellaLocations($country->getIsoById($address->id_country)),
         'selected' => $selected_pickup_point_id ? $selected_pickup_point_id : '',
-        'itella_send_to' => json_encode($country->getIsoById($address->id_country))
+        'itella_send_to' => json_encode($country->getIsoById($address->id_country)),
+        'filter_outdoors' => (int) Configuration::get('ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS')
       )
     );
 

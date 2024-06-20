@@ -8,6 +8,11 @@
 <script>
     var itella_country = JSON.parse('{$itella_send_to nofilter}');
     {literal}
+    var itella_locations_filters = {
+        {/literal}
+        exclude_outdoors: {$filter_outdoors}
+        {literal}
+    };
     // initialize here as front.js is registered during checkout page load
     ItellaModule.init();
     {/literal}

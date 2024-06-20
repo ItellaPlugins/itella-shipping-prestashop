@@ -3,9 +3,11 @@
 ## [Unreleased]
 ### Fixed
 - Disabled orderDetailDisplayed position, because it dont have function
+- Fixed an issue where new orders would not check order information when first placed
 
 ### Improved
 - Added compatibility with module onepagecheckoutps (v4.2.3)
+- Added option to disable display of pickup points that have "Outdoors" parameter on Checkout page
 
 ## [1.2.13]
 ### Fixed
