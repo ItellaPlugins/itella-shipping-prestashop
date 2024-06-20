@@ -16,6 +16,11 @@
 <script>
   var itella_country = JSON.parse('{$itella_send_to nofilter}');
   {literal}
+  var itella_locations_filters = {
+    {/literal}
+    exclude_outdoors: {$filter_outdoors}
+    {literal}
+  };
   // prestashop 1.7 registers JS at the end of file
   document.addEventListener('DOMContentLoaded', init);
 

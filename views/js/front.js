@@ -21,7 +21,7 @@ var ItellaModule = new function () {
       .setStrings(JSON.parse(itella_translation))
       .setCountry(itella_country);
     itella.init(map_enabled);
-    terminals = itella_locations;
+    terminals = self.filterLocations(itella_locations);
     itella.setLocations(terminals, true);
     itella.registerCallback(function (manual) {
       console.log(this.selectedPoint);
@@ -75,6 +75,26 @@ var ItellaModule = new function () {
     itella.setSelection($('#itella_pickup_point_id').val());
 
     self.validate(null, $("input[name*='delivery_option[']:checked"));
+  }
+
+  this.filterLocations = function (locations) {
+    if (typeof itella_locations_filters === 'undefined') {
+      return locations;
+    }
+
+    let i = locations.length;
+    while (i--) {
+      if (! Object.hasOwn(locations[i], 'capabilities')) {
+        continue;
+      }
+      for (let j = 0; j < locations[i].capabilities.length; j++) {
+        if (itella_locations_filters.exclude_outdoors && locations[i].capabilities[j].name == 'outdoors' && locations[i].capabilities[j].value == 'OUTDOORS') {
+          locations.splice(i, 1);
+        }
+      }
+    }
+
+    return locations;
   }
 
   this.checkPlacement = function () {
