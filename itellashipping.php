@@ -43,7 +43,7 @@ class ItellaShipping extends CarrierModule
     'displayBeforeCarrier',
     'actionGetExtraMailTemplateVars',
     'actionCarrierProcess',
-    'orderDetailDisplayed',
+    //'orderDetailDisplayed', //Disabled, because dont have function and throw error in PS 8.1
     //'actionValidateStepComplete' //Disabled, because dont have function and throw error in PS 8.1
   );
 
@@ -85,7 +85,7 @@ class ItellaShipping extends CarrierModule
   {
     $this->name = self::$_name;
     $this->tab = 'shipping_logistics';
-    $this->version = '1.2.13';
+    $this->version = '1.2.14';
     $this->author = 'Mijora.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
@@ -674,6 +674,7 @@ class ItellaShipping extends CarrierModule
       }
       Configuration::updateValue('ITELLA_CALL_EMAIL_SUBJECT', strval(Tools::getValue('ITELLA_CALL_EMAIL_SUBJECT')));
       Configuration::updateValue('ITELLA_SELECTOR_TYPE', (int) Tools::getValue('ITELLA_SELECTOR_TYPE'));
+      Configuration::updateValue('ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS', (int) Tools::getValue('ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS'));
       $output .= $this->displayConfirmation($this->l('Advanced settings updated'));
     }
 
@@ -1134,7 +1135,7 @@ class ItellaShipping extends CarrierModule
       'input' => array(
         array(
           'type' => 'select',
-          'label' => $this->l('Terminal selector type'),
+          'label' => $this->l('Pickup point selector type'),
           'name' => 'ITELLA_SELECTOR_TYPE',
           'options' => array(
             'query' => $selector_values,
@@ -1143,10 +1144,29 @@ class ItellaShipping extends CarrierModule
           )
         ),
         array(
+          'type' => 'switch',
+          'label' => $this->l('Exclude outdoors pickup points'),
+          'name' => 'ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS',
+          'desc' => $this->l('In the Checkout page dont show pickup points that have "Outdoors" parameter'),
+          'is_bool' => true,
+          'values' => array(
+            array(
+              'id' => 'label2_on',
+              'value' => 1,
+              'label' => $this->l('Enabled')
+            ),
+            array(
+              'id' => 'label2_off',
+              'value' => 0,
+              'label' => $this->l('Disabled')
+            )
+          )
+        ),
+        array(
           'type' => 'html',
           //'label' => $this->l('Last update time:'),
           'name' => 'itella_separator_html',
-          'html_content' => '<h3>&nbsp;</h3>',
+          'html_content' => '<hr/>',
         ),
         array(
           'type' => 'text',
@@ -1212,6 +1232,7 @@ class ItellaShipping extends CarrierModule
     }
     $helper->fields_value['ITELLA_CALL_EMAIL_SUBJECT'] = Configuration::get('ITELLA_CALL_EMAIL_SUBJECT');
     $helper->fields_value['ITELLA_SELECTOR_TYPE'] = Configuration::get('ITELLA_SELECTOR_TYPE');
+    $helper->fields_value['ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS'] = Configuration::get('ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS');
 
     return $helper->generateForm($fieldsForm);
   }
@@ -1424,7 +1445,8 @@ class ItellaShipping extends CarrierModule
       array(
         'pickup_points' => $this->loadItellaLocations($country->getIsoById($address->id_country)),
         'selected' => $selected_pickup_point_id ? $selected_pickup_point_id : '',
-        'itella_send_to' => json_encode($country->getIsoById($address->id_country))
+        'itella_send_to' => json_encode($country->getIsoById($address->id_country)),
+        'filter_outdoors' => (int) Configuration::get('ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS')
       )
     );
 
@@ -1536,7 +1558,7 @@ class ItellaShipping extends CarrierModule
     $itellaCart = new ItellaCart();
     $itella_cart_info = $itellaCart->getOrderItellaCartInfo($order->id_cart);
 
-    if (!$itella_cart_info) {
+    if (!$itella_cart_info || (int) $itella_cart_info['is_cod'] === -1) {
       $itellaCart->saveOrder($order);
       $itella_cart_info = $itellaCart->getOrderItellaCartInfo($order->id_cart);
     }
@@ -1576,6 +1598,14 @@ class ItellaShipping extends CarrierModule
       $itella_print_label_url = $this->context->link->getAdminLink('AdminItellashippingAjax', true) . '&action=printLabel&id_order=' . $order->id;
     }
 
+    $itella_cod_modules = explode(',', Configuration::get('ITELLA_COD_MODULES'));
+    $is_current_cod = in_array($order->module, $itella_cod_modules);
+
+    $cod_warning = false;
+    if ($is_current_cod !== (bool) $itella_cart_info['is_cod']) {
+      $cod_warning = $this->l('COD Yes/No mismatch! This could happen if COD modules were added later than this order was placed. Please change COD Yes/No and save or ignore this warning if mismatch is intentional');
+    }
+
     $this->smarty->assign(array(
       'itella_params' => json_encode(array(
         'order_car' => $carrier->id_reference,
@@ -1593,6 +1623,10 @@ class ItellaShipping extends CarrierModule
       'itella_module_url' => $itella_module_url,
       'itella_generate_label_url' => $itella_generate_label_url,
       'itella_print_label_url' => $itella_print_label_url,
+      'itella_cod_modules' => $itella_cod_modules,
+      'itella_order' => $order,
+      'itella_cod_warn' => $cod_warning,
+      'itella_cod_warning' => $cod_warning ? $this->displayWarning($cod_warning) : false,
     ));
 
     if (version_compare(_PS_VERSION_, '1.7.7', '>=')) {
