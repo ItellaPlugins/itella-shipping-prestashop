@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.2.14]
 ### Fixed
 - Disabled orderDetailDisplayed position, because it dont have function
 - Fixed an issue where new orders would not check order information when first placed
