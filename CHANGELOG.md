@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Fixed the permissions of the Venipak Manifests page so that it can be viewed by administrators with lower rights
+
 ## [1.2.14]
 ### Fixed
 - Disabled orderDetailDisplayed position, because it dont have function
