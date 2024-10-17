@@ -84,6 +84,11 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
     return $shop->name;
   }
 
+  public function viewAccess($disable = false)
+  {
+    return true;        
+  }
+
   protected function readyManifestList()
   {
     $this->fields_list = array(
