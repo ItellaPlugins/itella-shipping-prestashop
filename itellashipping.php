@@ -1357,6 +1357,7 @@ class ItellaShipping extends CarrierModule
           'contacts_header' => $this->l('Contacts'),
           'search_placeholder' => $this->l('Enter postcode'),
           'select_pickup_point' => $this->l('Select a pickup point'),
+          'select_pickup_point_alert' => $this->l('Please select pickup point'),
           'no_pickup_points' => $this->l('No points to select'),
           'select_btn' => $this->l('select'),
           'back_to_list_btn' => $this->l('reset search'),
