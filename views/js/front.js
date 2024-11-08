@@ -125,6 +125,9 @@ var ItellaModule = new function () {
       $('form#js-delivery input[type="radio"][name^="delivery_option["]').on('click', function (e) {
         self.validate(e, this);
       });
+      $('form#js-delivery button[type="submit"]').on('click', function (e) {
+        self.validate(e, this);
+      });
     } else {
       // using 1.6 version
       $(document).on('click', '[name^="delivery_option["]', function (e) {
@@ -166,14 +169,19 @@ var ItellaModule = new function () {
     var itella_selection = $('#itella_pickup_point_id').val();
 
     if (itella_ps_version >= 1.7) {
-      $('button[name="confirmDeliveryOption"]').prop('disabled', false);
+      $('button[name="confirmDeliveryOption"]').prop('disabled', false).attr('title', '');
     }
 
     if (selected_id == itella_carrier_pickup_id) {
-      if (!!itella_selection === false) {
+      if (Boolean(itella_selection) === false) {
 
         if (itella_ps_version >= 1.7) {
-          $('button[name="confirmDeliveryOption"]').prop('disabled', true);
+          if (event != null && event.target.type === 'submit') {
+            event.preventDefault();
+            self.showWarning(JSON.parse(itella_translation).select_pickup_point_alert);
+          } else {
+            $('button[name="confirmDeliveryOption"]').prop('disabled', true).attr('title', JSON.parse(itella_translation).select_pickup_point_alert);
+          }
           return false;
         }
 
