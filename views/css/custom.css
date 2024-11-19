@@ -36,13 +36,8 @@
   padding: 0;
   top: -25px;
   right: -6px;
-  /*opacity: 1;*/
 }
 
 .itella-fancybox-alert .fancybox-close-small svg path {
   fill: #dbdbdb;
-}
-
-.itella-fancybox-alert .fancybox-close-small:hover svg path {
-  /*fill: #fff;*/
 }
