@@ -149,28 +149,64 @@ var ItellaModule = new function () {
 
   this.showWarning = function (text) {
     if (!!$.prototype.fancybox) {
-      $.fancybox.open([
-        {
-          type: 'inline',
-          autoScale: true,
-          minHeight: 30,
-          content: '<p class="fancybox-error">' + text + '</p>'
-        }],
-        {
-          padding: 0
+      if (this.compareVersions($.fancybox.version, '3.0.0', '>=') && this.compareVersions($().jquery, '1.9.1', '>')) {
+        $.fancybox.open({
+          src: '<div><p>' + text + '</p></div>',
+          type: 'html',
+          baseClass: 'itella-fancybox-alert',
+          smallBtn: true,
+          mouseWheel: false,
+          touch: false
         });
+      } else {
+        $.fancybox.open([
+          {
+            type: 'inline',
+            autoScale: true,
+            minHeight: 30,
+            content: '<p class="fancybox-error">' + text + '</p>'
+          }],
+          {
+            padding: 0
+          });
+      }
     } else {
       alert(text);
+    }
+  }
+
+  this.compareVersions = function (v1, v2, op) {
+    const compare = (v1, v2) => {
+      let v1Parts = v1.split('.').map(Number);
+      let v2Parts = v2.split('.').map(Number);
+
+        for (let i = 0; i < Math.max(v1Parts.length, v2Parts.length); i++) {
+            let v1Part = v1Parts[i] || 0;
+            let v2Part = v2Parts[i] || 0;
+
+            if (v1Part > v2Part) return 1;
+            if (v1Part < v2Part) return -1;
+        }
+
+        return 0;
+    };
+
+    const result = compare(v1, v2);
+
+    switch (op) {
+        case '>': return result > 0;
+        case '>=': return result >= 0;
+        case '<': return result < 0;
+        case '<=': return result <= 0;
+        case '==': return result === 0;
+        case '!=': return result !== 0;
+        default: throw new Error('Imvalid operator: ' + op);
     }
   }
 
   this.validate = function (event, el) {
     var selected_id = $("input[name^='delivery_option[']:checked").val().split(',')[0];
     var itella_selection = $('#itella_pickup_point_id').val();
-
-    if (itella_ps_version >= 1.7) {
-      $('button[name="confirmDeliveryOption"]').prop('disabled', false).attr('title', '');
-    }
 
     if (selected_id == itella_carrier_pickup_id) {
       if (Boolean(itella_selection) === false) {
@@ -179,8 +215,6 @@ var ItellaModule = new function () {
           if (event != null && event.target.type === 'submit') {
             event.preventDefault();
             self.showWarning(JSON.parse(itella_translation).select_pickup_point_alert);
-          } else {
-            $('button[name="confirmDeliveryOption"]').prop('disabled', true).attr('title', JSON.parse(itella_translation).select_pickup_point_alert);
           }
           return false;
         }
