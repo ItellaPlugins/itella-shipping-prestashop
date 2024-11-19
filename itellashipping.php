@@ -1376,6 +1376,9 @@ class ItellaShipping extends CarrierModule
           $this->context->controller->registerJavascript('modules-itella-leaflet-js', 'modules/' . $this->name . '/views/js/leaflet.js');
         }
 
+        $this->context->controller->registerJavascript('modules-itella-fancybox-js', 'modules/' . $this->name . '/views/js/jquery.fancybox.min.js');
+        $this->context->controller->registerStylesheet('modules-itella-fancybox-css', 'modules/' . $this->name . '/views/css/jquery.fancybox.min.css');
+
         $this->context->controller->registerStylesheet('modules-itella-css', 'modules/' . $this->name . '/views/css/itella-mapping.css');
         $this->context->controller->registerStylesheet('modules-itella-custom-css', 'modules/' . $this->name . '/views/css/custom.css');
         $this->context->controller->registerJavascript('modules-itella-mapping-js', 'modules/' . $this->name . '/views/js/itella-mapping.js');
