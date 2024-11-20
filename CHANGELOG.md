@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.15]
+### Fixed
+- Fixed the permissions of the Venipak Manifests page so that it can be viewed by administrators with lower rights
+
+### Improved
+- Added an error message when trying to move to the next step on the Checkout page when a pickup point is not selected
+- Added missing translations into Lithuanian
+
 ## [1.2.14]
 ### Fixed
 - Disabled orderDetailDisplayed position, because it dont have function

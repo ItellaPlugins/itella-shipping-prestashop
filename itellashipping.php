@@ -85,7 +85,7 @@ class ItellaShipping extends CarrierModule
   {
     $this->name = self::$_name;
     $this->tab = 'shipping_logistics';
-    $this->version = '1.2.14';
+    $this->version = '1.2.15';
     $this->author = 'Mijora.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
@@ -1357,6 +1357,7 @@ class ItellaShipping extends CarrierModule
           'contacts_header' => $this->l('Contacts'),
           'search_placeholder' => $this->l('Enter postcode'),
           'select_pickup_point' => $this->l('Select a pickup point'),
+          'select_pickup_point_alert' => $this->l('Please select pickup point'),
           'no_pickup_points' => $this->l('No points to select'),
           'select_btn' => $this->l('select'),
           'back_to_list_btn' => $this->l('reset search'),
@@ -1374,6 +1375,9 @@ class ItellaShipping extends CarrierModule
           $this->context->controller->registerStylesheet('modules-itella-MarkerCluster.Default-css', 'modules/' . $this->name . '/views/css/MarkerCluster.Default.css');
           $this->context->controller->registerJavascript('modules-itella-leaflet-js', 'modules/' . $this->name . '/views/js/leaflet.js');
         }
+
+        $this->context->controller->registerJavascript('modules-itella-fancybox-js', 'modules/' . $this->name . '/views/js/jquery.fancybox.min.js');
+        $this->context->controller->registerStylesheet('modules-itella-fancybox-css', 'modules/' . $this->name . '/views/css/jquery.fancybox.min.css');
 
         $this->context->controller->registerStylesheet('modules-itella-css', 'modules/' . $this->name . '/views/css/itella-mapping.css');
         $this->context->controller->registerStylesheet('modules-itella-custom-css', 'modules/' . $this->name . '/views/css/custom.css');

@@ -19,3 +19,25 @@
 .itella-card-header img {
 	width: auto!important;
 }
+
+.itella-fancybox-alert .fancybox-content {
+  padding: 20px;
+  overflow: unset;
+}
+
+.itella-fancybox-alert .fancybox-content p {
+  margin: 0;
+  color: #333;
+}
+
+.itella-fancybox-alert .fancybox-close-small {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  top: -25px;
+  right: -6px;
+}
+
+.itella-fancybox-alert .fancybox-close-small svg path {
+  fill: #dbdbdb;
+}
