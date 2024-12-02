@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Updated
+- itella-api to v2.3.8.1
+
 ## [1.2.15]
 ### Fixed
 - Fixed the permissions of the Venipak Manifests page so that it can be viewed by administrators with lower rights
