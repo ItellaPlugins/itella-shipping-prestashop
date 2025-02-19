@@ -1584,6 +1584,9 @@ class ItellaShipping extends CarrierModule
     $address = new Address($order->id_address_delivery);
     $country = new Country();
     $pickup_points = json_decode($this->loadItellaLocations($country->getIsoById($address->id_country)), true);
+    if ( ! is_array($pickup_points) ) {
+      $pickup_points = array();
+    }
 
     usort($pickup_points, function ($a, $b) {
       if ($a['address']['municipality'] == $b['address']['municipality']) {
