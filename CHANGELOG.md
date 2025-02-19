@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Fixed an error on the order edit page if the list of pickup points could not be retrieved
+
 ## [1.2.16]
 ### Updated
 - itella-api to v2.3.8.1
