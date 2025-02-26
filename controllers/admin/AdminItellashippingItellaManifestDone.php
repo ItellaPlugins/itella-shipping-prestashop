@@ -28,7 +28,10 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
 
     ItellaShipping::checkForClass('ItellaManifest');
     $this->_select = ' a.id_itella_manifest as id_manifest,
-      (SELECT COUNT(*) FROM `' . _DB_PREFIX_ . 'itella_cart` ic WHERE ic.id_itella_manifest = a.id_itella_manifest) as manifest_total
+      (SELECT GROUP_CONCAT(o.id_order SEPARATOR ", ") 
+       FROM `' . _DB_PREFIX_ . 'itella_cart` ic 
+       JOIN `' . _DB_PREFIX_ . 'orders` o ON ic.id_cart = o.id_cart
+       WHERE ic.id_itella_manifest = a.id_itella_manifest) as manifest_total
     ';
 
     if (Tools::isSubmit('printitella_manifest')) {

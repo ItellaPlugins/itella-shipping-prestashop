@@ -2,8 +2,8 @@
   <div class="col-lg-6 col-md-6 col-xs-12 panel">
 
     <div class="panel-heading">
-      <img src="{$module_dir}logo.png" class="itella-logo" alt="Smartpost Logo">
-        {l s='Smartpost Shipping' mod='itellashipping'}
+      <img src="{$module_dir}logo.png" class="itella-logo" alt="Smartposti Logo">
+        {l s='Smartposti Shipping' mod='itellashipping'}
     </div>
 
     {if $itella_error}

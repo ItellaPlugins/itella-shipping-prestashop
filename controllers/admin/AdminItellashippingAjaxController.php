@@ -89,7 +89,7 @@ class AdminItellashippingAjaxController extends ModuleAdminController
     $carrier = new Carrier($order->id_carrier);
 
     if (!$this->isItellaOrder($carrier)) {
-      echo "Not Smartpost order.";
+      echo "Not Smartposti order.";
       die;
     }
 
@@ -264,7 +264,7 @@ class AdminItellashippingAjaxController extends ModuleAdminController
 
       ItellaShipping::changeOrderStatus($id_order, ItellaShipping::getCustomOrderState());
 
-      return json_encode(array('success' => 'Smartpost API: Order registered.', 'filename' => $id_order . '.pdf', 'tracking_number' => $tracking_number));
+      return json_encode(array('success' => 'Smartposti API: Order registered.', 'filename' => $id_order . '.pdf', 'tracking_number' => $tracking_number));
     } catch (ItellaException $e) {
       $itellaCart->saveError($data['id_cart'], $e->getMessage());
       return json_encode(array('errors' => $e->getMessage()));

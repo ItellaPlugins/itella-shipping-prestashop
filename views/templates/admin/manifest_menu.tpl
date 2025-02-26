@@ -48,7 +48,7 @@ $(document).ready(function () {
 });
 
 function create_itella_modal() {
-  var heading = '{l s="Call Smartpost Courier" mod="itellashipping"}';
+  var heading = '{l s="Call Smartposti Courier" mod="itellashipping"}';
   var question = '{l s="Please select store to call courier to:" mod="itellashipping"}' + '<select id="id_itella_store" class="chosen">';
   stores.forEach(function(store) {
     question += '<option value="'+store.id_itella_store+'" '+ (store.is_default == 1 ? 'selected' : '') +'>' + store.title + '</option>';

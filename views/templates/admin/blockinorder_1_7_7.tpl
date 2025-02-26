@@ -2,8 +2,8 @@
     <div class="col-lg-6 col-md-8 col-xs-12">
         <div class="card">
             <div class="card-header">
-                <img src="{$module_dir}logo.png" class="itella-logo" alt="Smartpost Logo">
-                {l s='Smartpost Shipping' mod='itellashipping'}
+                <img src="{$module_dir}views/images/logo.png" class="itella-logo" alt="Smartposti Logo">
+                {l s='Smartposti Shipping' mod='itellashipping'}
             </div>
 
             <div class="card-body">
