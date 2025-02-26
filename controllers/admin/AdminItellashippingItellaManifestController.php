@@ -32,7 +32,7 @@ class AdminItellashippingItellaManifestController extends ModuleAdminController
     $this->table = 'order';
     parent::__construct();
     ItellaShipping::checkForClass('ItellaManifest');
-    $this->toolbar_title = $this->l('Itella Manifest - Ready Orders');
+    $this->toolbar_title = $this->l('Smartposti Manifest - Ready Orders');
     $this->_select = '
     oc.tracking_number as label_number,
     CONCAT(LEFT(c.`firstname`, 1), \'. \', c.`lastname`) AS `customer`,

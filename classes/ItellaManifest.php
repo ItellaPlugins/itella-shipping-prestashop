@@ -123,13 +123,17 @@ class ItellaManifest extends ObjectModel
       case '1':
         $loc = $this->_module->isLocation($itella_cart['id_pickup_point'], $country_code);
         $result = $address->firstname . ' ' . $address->lastname . ',<br/>';
+        if (is_array($loc) && isset($loc['address'])) {
         $address = $loc['address'];
-        $result .= $this->_module->l('Pickup point:', 'ItellaManifest') . '<br/>' . $loc['labelName'] . '<br/>'
-          . $address['streetName'] . ' '
-          . $address['streetNumber'] . ', '
-          . $address['postalCode'] . ' '
-          . (empty($address['postalCodeName']) ? $address['municipality'] : $address['postalCodeName']) . ', '
-          . $loc['countryCode'];
+          $result .= $this->_module->l('Pickup point:', 'ItellaManifest') . '<br/>' . $loc['labelName'] . '<br/>'
+            . $address['streetName'] . ' '
+            . $address['streetNumber'] . ', '
+            . $address['postalCode'] . ' '
+            . (empty($address['postalCodeName']) ? $address['municipality'] : $address['postalCodeName']) . ', '
+            . $loc['countryCode'];
+        } else {
+          $result .= $this->_module->l('Pickup point:', 'ItellaManifest') . '<br/><i>' . $this->_module->l('Failed to get pickup point information', 'ItellaManifest') . '</i>';
+        }
         return $result;
         break;
 

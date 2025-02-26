@@ -2,16 +2,16 @@
 
 global $_MODULE;
 $_MODULE = array();
-$_MODULE['<{itellashipping}prestashop>itellashipping_c49343da8afdd64853e6d53321fc4c67'] = 'Smartpost pristatymas';
-$_MODULE['<{itellashipping}prestashop>itellashipping_2e34799e37f7aa54e3912d564d53ec12'] = 'Smartpost Itella pristatymo modulis';
+$_MODULE['<{itellashipping}prestashop>itellashipping_2e6b9d2ac662b1acfe6078b6fbbcea6d'] = 'Smartposti pristatymas';
+$_MODULE['<{itellashipping}prestashop>itellashipping_a88aea66906894e42ad8952b53ef88ca'] = 'Smartposti pristatymo būdai ir siuntų registravimas';
 $_MODULE['<{itellashipping}prestashop>itellashipping_876f23178c29dc2552c0b48bf23cd9bd'] = 'Ar tikrai norite ištrinti?';
-$_MODULE['<{itellashipping}prestashop>itellashipping_af3d15ac94b00f2c8cb9bfe44dee95f9'] = '\"Smartpost vežėjai\"';
-$_MODULE['<{itellashipping}prestashop>itellashipping_1a16b327edeb359e887767eae1be9e3b'] = '\"Abiejų Smartpost API vartotojas\"';
-$_MODULE['<{itellashipping}prestashop>itellashipping_d6c3362674f601829feebc490fe28ecc'] = '\"Abiejų Smartpost API slaptažodis\"';
+$_MODULE['<{itellashipping}prestashop>itellashipping_3e2ffdb73dd9f6de332c1447e9be4a18'] = '\"Smartposti vežėjai\"';
+$_MODULE['<{itellashipping}prestashop>itellashipping_e2ca2ac503d7fe8a7032c6ec5744f673'] = '\"Abiejų Smartposti API vartotojas\"';
+$_MODULE['<{itellashipping}prestashop>itellashipping_b55b92a6c7dd5b45395dc5b72af34d15'] = '\"Abiejų Smartposti API slaptažodis\"';
 $_MODULE['<{itellashipping}prestashop>itellashipping_18e1e43ab5128bbb7298d1de33979a3b'] = 'turi būti sukonfigūruoti šio modulio naudojimui.';
 $_MODULE['<{itellashipping}prestashop>itellashipping_821b8ee6937cec96c30fdafbfe836d68'] = 'Parduotuvės';
-$_MODULE['<{itellashipping}prestashop>itellashipping_140a295eae92a16661853a08147236cc'] = 'Smartpost';
-$_MODULE['<{itellashipping}prestashop>itellashipping_df3538dfc253c0abea5a267e023e7bba'] = 'Smartpost sugeneruoti manifestai';
+$_MODULE['<{itellashipping}prestashop>itellashipping_0040f87cdc89e2a9f35687bc04c81f6b'] = 'Smartposti';
+$_MODULE['<{itellashipping}prestashop>itellashipping_02515adcefbd9df227afa3af7fd1c9bd'] = 'Smartposti sugeneruoti manifestai';
 $_MODULE['<{itellashipping}prestashop>itellashipping_668e30d42f283c508f2fba277ff01c30'] = 'ItellaAdminAjax';
 $_MODULE['<{itellashipping}prestashop>itellashipping_9ad7fe90048689bfdac0d5493fde006c'] = 'Klaida sukuriant Tab';
 $_MODULE['<{itellashipping}prestashop>itellashipping_e626b7cebcb5d47ef963a94a722f26a4'] = 'Klaida trinant Tab';
@@ -68,11 +68,8 @@ $_MODULE['<{itellashipping}prestashop>itellashipping_9ffc3ccc968a96d902af963c6d7
 $_MODULE['<{itellashipping}prestashop>itellashipping_c462ba7b77db476e62857ad092f000ec'] = 'Atsiėmimo taško pasirinkimo tipas';
 $_MODULE['<{itellashipping}prestashop>itellashipping_ffb34d4a082025ff4ae022c35fd6643f'] = 'Neįtraukti lauke esančių atsiėmimo taškų';
 $_MODULE['<{itellashipping}prestashop>itellashipping_29894fcfc22756e33968ef0fed4263f5'] = 'Puslapyje \"Checkout\" nerodyti atsiėmimo taškų, kuriuose yra parametras \"Outdoors\"';
-$_MODULE['<{itellashipping}prestashop>itellashipping_bb2e86d238770bc6478885760cb8b256'] = 'Smartpost el.pašto subjektas';
-$_MODULE['<{itellashipping}prestashop>itellashipping_cf1916f4c653e5636725c20f98e1170e'] = 'Smartpost LT el.paštas';
-$_MODULE['<{itellashipping}prestashop>itellashipping_06cf68f38b597a69ae591637291555d5'] = 'Smartpost LV el.paštas';
-$_MODULE['<{itellashipping}prestashop>itellashipping_d68794950d527c7f2c6746674b191dc1'] = 'Smartpost EE el.paštas';
-$_MODULE['<{itellashipping}prestashop>itellashipping_32419ef66c3551704407d3577ab14fad'] = 'Smartpost FI el.paštas';
+$_MODULE['<{itellashipping}prestashop>itellashipping_d56d6cf21541e53d8206d5b8753eea21'] = 'Smartposti el.pašto subjektas';
+$_MODULE['<{itellashipping}prestashop>itellashipping_02b8e13ef5a0093671d1d6d7c0353510'] = '%s el.paštas';
 $_MODULE['<{itellashipping}prestashop>itellashipping_485115c849e2941a8608587cab909927'] = 'Atsiėmimo taškai';
 $_MODULE['<{itellashipping}prestashop>itellashipping_ee5c5839980b47f1893220655a3de0fb'] = 'Atsiėmimo taškas';
 $_MODULE['<{itellashipping}prestashop>itellashipping_0f8a72ddc990a25bc754a256416cdff7'] = 'Darbo laikas';
@@ -113,7 +110,7 @@ $_MODULE['<{itellashipping}prestashop>adminitellashippingitellastorecontroller_a
 $_MODULE['<{itellashipping}prestashop>adminitellashippingitellastorecontroller_a0f348fe663c58ad0fd8977b50c5c7aa'] = 'Pažymėti adresą numatytuoju jis privalo būti aktyvus';
 $_MODULE['<{itellashipping}prestashop>adminitellashippingajaxcontroller_77e50a52c2a5dcf5ead6d967c01d373a'] = 'Užsakymo ID nebuvo išsiųsti';
 $_MODULE['<{itellashipping}prestashop>adminitellashippingajaxcontroller_84b3849dde95d836da07c0fdaf96a59e'] = 'Užsakymas turi būti išsaugotas';
-$_MODULE['<{itellashipping}prestashop>adminitellashippingitellamanifestcontroller_f82324941141a07d81c98e67d2bc9266'] = 'Itella Manifestas - paruošti užsakymai';
+$_MODULE['<{itellashipping}prestashop>adminitellashippingitellamanifestcontroller_64740477ab1eeeaafeb34473f66ea820'] = 'Smartposti Manifestas - paruošti užsakymai';
 $_MODULE['<{itellashipping}prestashop>adminitellashippingitellamanifestcontroller_c29869505dbcdbc8d8b8b3e9d91b2509'] = 'Pasirinkite parduotuvę';
 $_MODULE['<{itellashipping}prestashop>adminitellashippingitellamanifestcontroller_e76993035664c383371c367f9f9bbca4'] = 'Paruošti užsakymai';
 $_MODULE['<{itellashipping}prestashop>adminitellashippingitellamanifestcontroller_efc8355ee98b2773b68365d55d3ecb36'] = 'Sugeneruoti manifestai';
@@ -155,7 +152,7 @@ $_MODULE['<{itellashipping}prestashop>adminitellashippingitellamanifestdone_a21b
 $_MODULE['<{itellashipping}prestashop>adminitellashippingitellamanifestdone_2f2e8e79b20a2d8630301c7ff2a83a4a'] = 'Blogas parduotuvės adreso ID';
 $_MODULE['<{itellashipping}prestashop>ajax_77e50a52c2a5dcf5ead6d967c01d373a'] = 'Nepasirinkta užsakymai';
 $_MODULE['<{itellashipping}prestashop>ajax_84b3849dde95d836da07c0fdaf96a59e'] = 'Užsakymas privalo būti išsaugotas';
-$_MODULE['<{itellashipping}prestashop>blockinorder_c49343da8afdd64853e6d53321fc4c67'] = 'Smartpost pristatymas';
+$_MODULE['<{itellashipping}prestashop>blockinorder_2e6b9d2ac662b1acfe6078b6fbbcea6d'] = 'Smartposti pristatymas';
 $_MODULE['<{itellashipping}prestashop>blockinorder_c5c410d034828980e186a7317530112f'] = 'Siuntiniai (viso)';
 $_MODULE['<{itellashipping}prestashop>blockinorder_91721604210524b7051d99c4c8478715'] = 'Svoris (kg)';
 $_MODULE['<{itellashipping}prestashop>blockinorder_57d70173adbd8e5391a44e960cfcb4a3'] = 'C.O.D';
@@ -176,7 +173,7 @@ $_MODULE['<{itellashipping}prestashop>blockinorder_0be8406951cdfda82f00f79328cf4
 $_MODULE['<{itellashipping}prestashop>blockinorder_13dba24862cf9128167a59100e154c8d'] = 'Spausdinti';
 $_MODULE['<{itellashipping}prestashop>blockinorder_c9cc8cce247e49bae79f15173ce97354'] = 'Išsaugoti';
 $_MODULE['<{itellashipping}prestashop>blockinorder_5050224de02ab60008e2fe590f0b7bea'] = 'Generuoti lipduką';
-$_MODULE['<{itellashipping}prestashop>blockinorder_1_7_7_c49343da8afdd64853e6d53321fc4c67'] = 'Smartpost pristatymas';
+$_MODULE['<{itellashipping}prestashop>blockinorder_1_7_7_2e6b9d2ac662b1acfe6078b6fbbcea6d'] = 'Smartposti pristatymas';
 $_MODULE['<{itellashipping}prestashop>blockinorder_1_7_7_c5c410d034828980e186a7317530112f'] = 'Siuntiniai (viso)';
 $_MODULE['<{itellashipping}prestashop>blockinorder_1_7_7_91721604210524b7051d99c4c8478715'] = 'Svoris (kg)';
 $_MODULE['<{itellashipping}prestashop>blockinorder_1_7_7_57d70173adbd8e5391a44e960cfcb4a3'] = 'C.O.D';
@@ -220,3 +217,4 @@ $_MODULE['<{itellashipping}prestashop>itellamanifest_5055d1a4444c630d6839f48ab48
 $_MODULE['<{itellashipping}prestashop>itellamanifest_8aace3ec18d83874d22850b7eee93c7d'] = 'Siuntėjo';
 $_MODULE['<{itellashipping}prestashop>itellamanifest_8231e45346118a458bbd25bbf4e12364'] = 'vardas, pavardė, parašas';
 $_MODULE['<{itellashipping}prestashop>itellamanifest_4e5696a0792b88af51c46c4f67e59e18'] = 'Atsiėmimo taškas:';
+$_MODULE['<{itellashipping}prestashop>itellamanifest_f250a9f5119de0a8902a616a2d0333b5'] = 'Nepavyko gauti paštomato informacijos';

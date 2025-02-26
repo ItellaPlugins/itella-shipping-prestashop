@@ -17,7 +17,7 @@ var itellaMapping = /*#__PURE__*/function () {
     _classCallCheck(this, itellaMapping);
 
     /* Itella Mapping version */
-    this.version = '1.3.1';
+    this.version = '1.3.2';
     this._isDebug = false;
     /* default map center Lithuania Kaunas */
 
@@ -720,8 +720,8 @@ var itellaMapping = /*#__PURE__*/function () {
       }).addTo(this._map);
       var Icon = L.Icon.extend({
         options: {
-          iconSize: [29, 34],
-          iconAnchor: [15, 34],
+          iconSize: [30, 44],
+          iconAnchor: [15, 44],
           popupAnchor: [-3, -76]
         }
       });
