@@ -260,7 +260,7 @@ class ItellaShipping extends CarrierModule
   /**
    * Registers module Admin tabs (controllers)
    */
-  private function registerTabs()
+  public function registerTabs()
   {
     $tabs = $this->getModuleTabs();
 
@@ -298,7 +298,7 @@ class ItellaShipping extends CarrierModule
    * @throws PrestaShopDatabaseException
    * @throws PrestaShopException
    */
-  private function deleteTabs()
+  public function deleteTabs()
   {
     $tabs = $this->getModuleTabs();
 
@@ -498,7 +498,7 @@ class ItellaShipping extends CarrierModule
       );
     }
     try {
-      copy(dirname(__FILE__) . '/logo.png', _PS_SHIP_IMG_DIR_ . '/' . (int) $carrier->id . '.jpg');
+      copy(dirname(__FILE__) . '/views/images/logo_square.jpg', _PS_SHIP_IMG_DIR_ . '/' . (int) $carrier->id . '.jpg');
     } catch (Exception $e) {
     }
 

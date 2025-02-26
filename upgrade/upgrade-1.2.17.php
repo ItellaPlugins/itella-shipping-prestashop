@@ -5,7 +5,7 @@ if (!defined('_PS_VERSION_')) {
 
 function upgrade_module_1_2_17($module)
 {
-    $new_logo = _PS_MODULE_DIR_ . 'itellashipping/views/images/logo_square.png';
+    $new_logo = _PS_MODULE_DIR_ . 'itellashipping/views/images/logo_square.jpg';
     $itella_carriers = $module->getItellaCarriers();
     foreach ( $itella_carriers as $carrier ) {
         if ( ! isset($carrier['id_carrier']) ) {
@@ -15,6 +15,9 @@ function upgrade_module_1_2_17($module)
             createNewTmpLogo($carrier['id_carrier']);
         }
     }
+
+    $module->deleteTabs();
+    $module->registerTabs();
 }
 
 function replaceCarrierLogo($id_carrier, $new_logo_path)
