@@ -221,7 +221,7 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
           ($isTest ? 'TEST CALL - ' : '') . Configuration::get('ITELLA_CALL_EMAIL_SUBJECT'),
           $data,
           $send_to,
-          'Itella Courier Service',
+          'Smartposti Courier Service',
           $this->context->employee->email,
           Configuration::get('ITELLA_SENDER_NAME'),
           $file_attachement,
@@ -240,7 +240,7 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
         exit();
       }
 
-      echo json_encode(array('success' => $this->l('Itella courier called')));
+      echo json_encode(array('success' => $this->l('Smartposti courier called')));
       exit();
     }
     echo json_encode(array('error' => $this->l('Bad store address ID')));
