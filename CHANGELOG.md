@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.3.0]
 ### Fixed
 - Fixed an error on the order edit page if the list of pickup points could not be retrieved
 

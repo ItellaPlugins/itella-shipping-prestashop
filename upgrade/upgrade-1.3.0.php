@@ -3,7 +3,7 @@ if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-function upgrade_module_1_2_17($module)
+function upgrade_module_1_3_0($module)
 {
     $new_logo = _PS_MODULE_DIR_ . 'itellashipping/views/images/logo_square.jpg';
     $itella_carriers = $module->getItellaCarriers();
