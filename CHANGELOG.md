@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.3.0]
+### Fixed
+- Fixed an error on the order edit page if the list of pickup points could not be retrieved
+
+### Changed
+- changed name "Smartpost" to "Smartposti"
+- changed logo
+- changed map colors
+
 ## [1.2.16]
 ### Updated
 - itella-api to v2.3.8.1

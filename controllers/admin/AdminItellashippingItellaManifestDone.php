@@ -28,7 +28,10 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
 
     ItellaShipping::checkForClass('ItellaManifest');
     $this->_select = ' a.id_itella_manifest as id_manifest,
-      (SELECT COUNT(*) FROM `' . _DB_PREFIX_ . 'itella_cart` ic WHERE ic.id_itella_manifest = a.id_itella_manifest) as manifest_total
+      (SELECT GROUP_CONCAT(o.id_order SEPARATOR ", ") 
+       FROM `' . _DB_PREFIX_ . 'itella_cart` ic 
+       JOIN `' . _DB_PREFIX_ . 'orders` o ON ic.id_cart = o.id_cart
+       WHERE ic.id_itella_manifest = a.id_itella_manifest) as manifest_total
     ';
 
     if (Tools::isSubmit('printitella_manifest')) {
@@ -218,7 +221,7 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
           ($isTest ? 'TEST CALL - ' : '') . Configuration::get('ITELLA_CALL_EMAIL_SUBJECT'),
           $data,
           $send_to,
-          'Itella Courier Service',
+          'Smartposti Courier Service',
           $this->context->employee->email,
           Configuration::get('ITELLA_SENDER_NAME'),
           $file_attachement,
@@ -237,7 +240,7 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
         exit();
       }
 
-      echo json_encode(array('success' => $this->l('Itella courier called')));
+      echo json_encode(array('success' => $this->l('Smartposti courier called')));
       exit();
     }
     echo json_encode(array('error' => $this->l('Bad store address ID')));

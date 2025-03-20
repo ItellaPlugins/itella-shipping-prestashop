@@ -1,3 +1,11 @@
+:root {
+  --imjs-primary-color-1: #FF8000;
+  --imjs-primary-color-2: #E87500;
+  --imjs-secondary-color: #005DC0;
+  --imjs-support-color: #48A84C;
+  --imjs-hower-line-color: #FFD9B2;
+}
+
 .itella-mapping-modal *,
 .itella-shipping-container * {
   box-sizing: border-box;
@@ -25,17 +33,18 @@
 }
 
 .itella-shipping-container .itella-modal-btn {
-  background: #391dc2;
+  background: var(--imjs-primary-color-1);
   color: #fff;
   text-decoration: none;
   text-transform: uppercase;
   font-size: 12px;
   padding: 0 1em;
   line-height: 30px;
-  border-radius: 4px;
+  border-radius: 3rem;
 }
 
 .itella-shipping-container .itella-modal-btn:hover {
+  background: var(--imjs-primary-color-2);
   color: #fff!important;
   cursor: pointer;
 }
@@ -113,12 +122,13 @@
 
 .itella-card-header {
   padding: 12px 24px;
-  background-color: #391dc2;
+  background-color: var(--imjs-primary-color-1);
   color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-radius: 4px 4px 0 0;
+  display: none;
 }
 
 .itella-card-header h2 {
@@ -127,7 +137,7 @@
 }
 
 .itella-card-header img {
-  height: 30px;
+  height: 25px;
 }
 
 .itella-card-content {
@@ -188,13 +198,19 @@
 }
 
 .itella-card-footer .itella-btn {
-  border-radius: 4px;
-  background-color: #575757;
+  border: unset;
+  border-radius: 3rem;
+  background-color: var(--imjs-primary-color-1);
   padding: 0;
   width: 100%;
   line-height: 30px;
   color: #fff;
   text-transform: uppercase;
+  cursor: pointer;
+}
+
+.itella-card-footer .itella-btn:hover {
+  background-color: var(--imjs-primary-color-2);
 }
 
 /* Custom Dropdown */
@@ -263,7 +279,7 @@
 
 .itella-select .search-bar {
   width: 100%;
-  background-color: #cfd2f1;
+  background-color: var(--imjs-hower-line-color);
   padding: 7px 5px;
   position: relative;
 }
@@ -277,7 +293,7 @@
   outline: none;
   border: none;
   font: unset;
-  border-bottom: 1px solid #aeb1c8;
+  border-bottom: 1px solid var(--imjs-primary-color-1);
   font-family: inherit;
   font-size: 1em;
   padding-right: 30px;
@@ -322,12 +338,12 @@
 }
 
 .itella-select ul li.active {
-  background-color: #391dc2;
+  background-color: var(--imjs-primary-color-1);
   color: #fff;
 }
 
 .itella-select ul li:not(.city):not(.active):hover {
-  background-color: #aeb1c8;
+  background-color: var(--imjs-hower-line-color);
   cursor: pointer;
 }
 
@@ -355,7 +371,7 @@
 }
 
 .itella-map img.active {
-  filter: hue-rotate(90deg);
+  filter: hue-rotate(190deg) saturate(240%) brightness(170%);
   -webkit-animation: bounce 0.4s infinite alternate;
           animation: bounce 0.4s infinite alternate;
 }
