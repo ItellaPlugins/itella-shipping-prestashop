@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Fixed
+- Fixed Javascript error if the received pickup point data contains the parameter "capabilities", but its value is NULL
+
 ## [1.3.0]
 ### Fixed
 - Fixed an error on the order edit page if the list of pickup points could not be retrieved
