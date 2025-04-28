@@ -84,7 +84,7 @@ var ItellaModule = new function () {
 
     let i = locations.length;
     while (i--) {
-      if (! Object.hasOwn(locations[i], 'capabilities')) {
+      if (!Object.hasOwn(locations[i], 'capabilities') || locations[i].capabilities == null) {
         continue;
       }
       for (let j = 0; j < locations[i].capabilities.length; j++) {
