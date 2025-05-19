@@ -66,6 +66,7 @@ class ItellaShipping extends CarrierModule
 
   private $_sender_keys = array(
     'ITELLA_SENDER_NAME',
+    'ITELLA_SENDER_CODE',
     'ITELLA_SENDER_STREET',
     'ITELLA_SENDER_POSTCODE',
     'ITELLA_SENDER_CITY',
@@ -75,6 +76,8 @@ class ItellaShipping extends CarrierModule
   );
 
   private $_advanced_keys = array(
+    'ITELLA_CALL_MESSAGE',
+    'ITELLA_CALL_EMAIL_SUBJECT',
     'ITELLA_CALL_EMAIL_LT',
     'ITELLA_CALL_EMAIL_LV',
     'ITELLA_CALL_EMAIL_EE',
@@ -688,7 +691,6 @@ class ItellaShipping extends CarrierModule
         $value = strval(Tools::getValue($key));
         Configuration::updateValue($key, $value);
       }
-      Configuration::updateValue('ITELLA_CALL_EMAIL_SUBJECT', strval(Tools::getValue('ITELLA_CALL_EMAIL_SUBJECT')));
       Configuration::updateValue('ITELLA_SELECTOR_TYPE', (int) Tools::getValue('ITELLA_SELECTOR_TYPE'));
       Configuration::updateValue('ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS', (int) Tools::getValue('ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS'));
       $output .= $this->displayConfirmation($this->l('Advanced settings updated'));
@@ -795,6 +797,13 @@ class ItellaShipping extends CarrierModule
         ),
         array(
           'type' => 'text',
+          'label' => $this->l('Company code'),
+          'desc' => $this->l('VAT code is also suitable'),
+          'name' => 'ITELLA_SENDER_CODE',
+          'size' => 20,
+        ),
+        array(
+          'type' => 'text',
           'label' => $this->l('Street'),
           'name' => 'ITELLA_SENDER_STREET',
           'size' => 20,
@@ -816,17 +825,18 @@ class ItellaShipping extends CarrierModule
         ),
         array(
           'type' => 'select',
-          'label' => $this->l('Country Code'),
+          'label' => $this->l('Country code'),
           'name' => 'ITELLA_SENDER_COUNTRY_CODE',
           'options' => array(
             'query' => $query_country_values,
             'id' => 'id_option',
             'name' => 'name'
-          )
+          ),
+          'required' => true
         ),
         array(
           'type' => 'text',
-          'label' => $this->l('Mob. Phone'),
+          'label' => $this->l('Mob. phone'),
           'name' => 'ITELLA_SENDER_PHONE',
           'size' => 20,
           'required' => true
@@ -1190,6 +1200,14 @@ class ItellaShipping extends CarrierModule
         ),
         array(
           'type' => 'text',
+          'label' => $this->l('Courier call note'),
+          'name' => 'ITELLA_CALL_MESSAGE',
+          'size' => 20,
+          'required' => false,
+          'desc' => $this->l('A message related to the pickup of shipments is sent to the courier when the courier is called'),
+        ),
+        array(
+          'type' => 'text',
           'label' => $this->l('Smartposti email subject'),
           'name' => 'ITELLA_CALL_EMAIL_SUBJECT',
           'size' => 20,
@@ -1228,7 +1246,6 @@ class ItellaShipping extends CarrierModule
     foreach ($this->_advanced_keys as $key) {
       $helper->fields_value[$key] = Configuration::get($key);
     }
-    $helper->fields_value['ITELLA_CALL_EMAIL_SUBJECT'] = Configuration::get('ITELLA_CALL_EMAIL_SUBJECT');
     $helper->fields_value['ITELLA_SELECTOR_TYPE'] = Configuration::get('ITELLA_SELECTOR_TYPE');
     $helper->fields_value['ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS'] = Configuration::get('ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS');
 
