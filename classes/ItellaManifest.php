@@ -84,7 +84,7 @@ class ItellaManifest extends ObjectModel
     $items = array();
     foreach ($result as $row) {
       $items[] = array(
-        'tracking_number' => implode(' ', explode(',', $row['label_number'])),
+        'track_num' => implode(' ', explode(',', $row['label_number'])),
         'amount' => $row['packs'],
         'weight' => $row['weight'],
         'delivery_address' => $this->generateDeliveryAddress($row)

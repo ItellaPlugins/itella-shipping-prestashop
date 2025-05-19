@@ -4,7 +4,7 @@ use PrestaShop\PrestaShop\Adapter\Entity\PrestaShopException;
 
 class AdminItellashippingItellaStoreController extends ModuleAdminController
 {
-  const DEFAULT_PICK_START = '8:00';
+  const DEFAULT_PICK_START = '08:00';
 
   const DEFAULT_PICK_FINISH = '17:00';
 
@@ -44,6 +44,25 @@ class AdminItellashippingItellaStoreController extends ModuleAdminController
 
   private function initForm()
   {
+    $id_lang = (int) Context::getContext()->language->id;
+    $countries_options = array();
+    $countries = Country::getCountries($id_lang, false);
+    foreach ($countries as $country) {
+      $countries_options[] = array(
+        'id' => $country['iso_code'],
+        'name' => $country['name']
+      );
+    }
+
+    $time_options = array();
+    for ($h = 0; $h < 24; $h++) {
+      for ($m = 0; $m < 60; $m += 30) {
+        $formatted_h = str_pad($h, 2, '0', STR_PAD_LEFT);
+        $formatted_m = str_pad($m, 2, '0', STR_PAD_LEFT);
+        $time_options[] = array('time' => $formatted_h . ':' . $formatted_m);
+      }
+    }
+
     $this->fields_form = array(
       'legend' => array(
         'title' => $this->l('Store address'),
@@ -75,10 +94,15 @@ class AdminItellashippingItellaStoreController extends ModuleAdminController
           'required' => true
         ),
         array(
-          'type' => 'text',
-          'label' => $this->l('Country Code'),
+          'type' => 'select',
+          'label' => $this->l('Country'),
           'name' => 'country_code',
-          'required' => true
+          'required' => true,
+          'options' => array(
+            'query' => $countries_options,
+            'id' => 'id',
+            'name' => 'name'
+          )
         ),
         array(
           'type' => 'text',
@@ -86,18 +110,28 @@ class AdminItellashippingItellaStoreController extends ModuleAdminController
           'name' => 'phone',
           'required' => true
         ),
-        // array(
-        //   'type' => 'text',
-        //   'label' => $this->l('Pick Start'),
-        //   'name' => 'pick_start',
-        //   'required' => true
-        // ),
-        // array(
-        //   'type' => 'text',
-        //   'label' => $this->l('Pick Finish'),
-        //   'name' => 'pick_finish',
-        //   'required' => true
-        // ),
+        array(
+          'type' => 'select',
+          'label' => $this->l('Shipments pickup time start'),
+          'name' => 'pick_start',
+          'required' => true,
+          'options' => array(
+            'query' => $time_options,
+            'id' => 'time',
+            'name' => 'time'
+          )
+        ),
+        array(
+          'type' => 'select',
+          'label' => $this->l('Shipments pickup time finish'),
+          'name' => 'pick_finish',
+          'required' => true,
+          'options' => array(
+            'query' => $time_options,
+            'id' => 'time',
+            'name' => 'time'
+          )
+        ),
         array(
           'type' => 'hidden',
           'name' => 'id_shop',
