@@ -196,6 +196,9 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
       $call_time_from = Tools::getValue('call_time_from');
       $call_time_to = Tools::getValue('call_time_to');
 
+      $errors = array();
+      $success = array();
+
       try {
         $caller = new CallCourier($email_send_to, $isTest);
         $caller
@@ -220,34 +223,80 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
           ))
           ->setAttachment($manifest->getManifestString(), true)
           ->setItems($manifest->getManifestItems())
-          ->showMessagesPrefix(true);
+          ->disableMethod('email');
 
-          $result = $caller->callCourier();
-          $return = array();
+        $result_api = $caller->callCourier();
 
-          /*$caller_email = $this->sendCallEmail($caller, $email_send_to, $manifest->getManifestString(), $storeObj->id_shop);
-          if (isset($caller_email['error'])) {
-            $result['errors'][] = 'PS EMAIL: ' . $caller_email['error'];
-          } else {
-            $result['success'][] = 'PS EMAIL: ' . $caller_email['success'];
-          }*/
-
-          if (empty($result['success']) && !empty($result['errors'])) {
-            $return['error'] = implode('<br/>', $result['errors']);
-          } else if (!empty($result['errors'])) {
-            $return['success'] = implode('<br/>', $result['success']) . '<br/><br/><span style="color:#f55;">' . implode('<br/>', $result['errors']) . '</span>';
-          } else if (!empty($result['success'])) {
-            $return['success'] = implode('<br/>', $result['success']);
-          } else {
-            $return['error'] = $this->l('An unknown result was received from the call');
-          }
-
-          echo json_encode($return);
-          exit();
+        if (!empty($result_api['errors'])) {
+          $errors = array_merge($errors, $result_api['errors']);
+        }
+        if (!empty($result_api['success'])) {
+          $success = array_merge($success, $result_api['success']);
+        }
+        if (empty($result_api['errors']) && empty($result_api['success'])) {
+          $errors[] = $this->l('An unknown result was received from API library');
+        }
       } catch (\ItellaException $e) {
-        echo json_encode(array('error' => $this->l('Call courier failed with:') . ' ' . $e->getMessage()));
-        exit();
+        $errors[] = $this->l('Call courier failed with:') . ' ' . $e->getMessage();
       }
+
+      try {
+        if (!$email_send_to) {
+          throw new \Exception($this->l('Courier service email not set'));
+        }
+
+        $file_attachement = array(
+          'content' => $manifest->getManifestString(),
+          'name' => 'manifest.pdf',
+          'mime' => 'application/pdf'
+        );
+
+        $id_lang = Language::getIdByIso('en');
+        if (!$id_lang) {
+          $id_lang = (int)Configuration::get('PS_LANG_DEFAULT');
+        }
+
+        $dir_mail = $this->module->getLocalPath() . 'mails/';
+
+        $data = array(
+          '{title}' => $email_subject,
+          '{body}' => $caller->buildMailBody()
+        );
+
+        $mail_sent = Mail::Send(
+          $id_lang,
+          'itella_call_courier',
+          ($isTest ? 'TEST CALL - ' : '') . $email_subject,
+          $data,
+          $email_send_to,
+          'Smartposti Courier Service',
+          $this->context->employee->email,
+          $sender_name,
+          $file_attachement,
+          null,
+          $dir_mail,
+          false,
+          (int) $storeObj->id_shop
+        );
+
+        $success[] = $this->l('Courier call email sent');
+      } catch (\Exception $e) {
+        $errors[] = $this->l('Failed to send courier call email') . ': ' . $e->getMessage();
+      }
+
+      $return = array();
+      if (empty($success) && !empty($errors)) {
+        $return['error'] = implode('<br/>', $errors);
+      } else if (!empty($errors)) {
+        $return['success'] = implode('<br/>', $success) . '<br/><br/><span style="color:#f55;">' . implode('<br/>', $errors) . '</span>';
+      } else if (!empty($success)) {
+        $return['success'] = implode('<br/>', $success);
+      } else {
+        $return['error'] = $this->l('An unknown result was received from the call');
+      }
+
+      echo json_encode($return);
+      exit();
     }
     echo json_encode(array('error' => $this->l('Bad store address ID')));
     exit();

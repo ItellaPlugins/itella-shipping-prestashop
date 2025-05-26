@@ -12,7 +12,7 @@
 - Courier invitation adapted to changes in the updated API library
 
 ### Updated
-- itella-api to v2.4.3
+- itella-api to v2.4.4
 
 ## [1.3.0]
 ### Fixed
