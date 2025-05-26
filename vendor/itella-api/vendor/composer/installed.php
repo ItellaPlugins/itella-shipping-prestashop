@@ -1,8 +1,8 @@
 <?php return array(
     'root' => array(
         'name' => 'mijora/itella-api',
-        'pretty_version' => '2.4.3',
-        'version' => '2.4.3.0',
+        'pretty_version' => '2.4.4',
+        'version' => '2.4.4.0',
         'reference' => null,
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
@@ -11,8 +11,8 @@
     ),
     'versions' => array(
         'mijora/itella-api' => array(
-            'pretty_version' => '2.4.3',
-            'version' => '2.4.3.0',
+            'pretty_version' => '2.4.4',
+            'version' => '2.4.4.0',
             'reference' => null,
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',

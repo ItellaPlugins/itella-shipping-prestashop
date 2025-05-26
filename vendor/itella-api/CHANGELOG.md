@@ -1,5 +1,13 @@
 # Changelog
 
+## [2.4.4]
+### Fixed
+- fixed prefix control
+- fixed pickup time automatic generation
+
+### Added
+- added `enableMethod()` and `disableMethod()` functions to make it easier to manage methods
+
 ## [2.4.3]
 ### Fixed
 - fixed a bug in the POSTRA method where user logins are passed through separate functions, instead of directly to the calling function
