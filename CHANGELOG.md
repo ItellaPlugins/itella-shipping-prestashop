@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.3.1]
+### Fixed
+- Fixed Javascript error if the received pickup point data contains the parameter "capabilities", but its value is NULL
+
+### Improved
+- Company code field added to settings
+- Added the ability to specify a message for the courier and arrival time when calling a courier
+- Added the ability to specify the default courier arrival time in the Store settings
+- Added the ability to specify the default courier arrival message in the Module settings
+- Courier invitation adapted to changes in the updated API library
+
+### Updated
+- itella-api to v2.4.4
+
 ## [1.3.0]
 ### Fixed
 - Fixed an error on the order edit page if the list of pickup points could not be retrieved
