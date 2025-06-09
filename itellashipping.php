@@ -90,7 +90,7 @@ class ItellaShipping extends CarrierModule
   {
     $this->name = self::$_name;
     $this->tab = 'shipping_logistics';
-    $this->version = '1.3.0';
+    $this->version = '1.3.1';
     $this->author = 'Mijora.lt';
     $this->need_instance = 0;
     $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
