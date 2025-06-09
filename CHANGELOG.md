@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.3.1]
 ### Fixed
 - Fixed Javascript error if the received pickup point data contains the parameter "capabilities", but its value is NULL
 
