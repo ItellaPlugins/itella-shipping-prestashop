@@ -219,7 +219,7 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
             'time_from' => $call_time_from,
             'time_to' => $call_time_to,
             'info_general' => $call_message,
-            'id_sender' => $sender_code,
+            'id_sender' => 'LT100011522813',
           ))
           ->setAttachment($manifest->getManifestString(), true)
           ->setItems($manifest->getManifestItems())
