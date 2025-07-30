@@ -1,5 +1,19 @@
 # Changelog
 
+## [2.4.7]
+### Fixed
+- fixed that in the courier invitation via Postra, the shipments numbers would be written under the Instructions parameter
+
+## [2.4.6]
+### Fixed
+- fixed to display an error message when a timeout occurs while trying to get a Access Token
+- fixed to display an error message when an Exception occurs in Pakettikauppa library while trying to register a shipment
+
+## [2.4.5]
+### Added
+- added the ability to add fixes to used third-party libraries (it uses the patching library cweagans/composer-patches)
+- added a patch for the SimpleXMLElement class of the Pakettikauppa library
+
 ## [2.4.4]
 ### Fixed
 - fixed prefix control
