@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.3.3]
 ### Updated
 - itella-api to v2.4.7
 
