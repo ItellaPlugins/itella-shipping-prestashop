@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Updated
+- itella-api to v2.4.7
+
 ## [1.3.2]
 ### Fixed
 - Fixed the Sender ID of the courier invitation to use the plugin developer ID instead of the sender's company code
