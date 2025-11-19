@@ -1,6 +1,9 @@
 # Changelog
 
 ## [Unreleased]
+### Fixed
+- fixed v1.3.0 upgrade function
+
 ### Updated
 - itella-api to v2.5.0
 

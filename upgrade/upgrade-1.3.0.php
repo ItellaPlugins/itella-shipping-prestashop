@@ -18,6 +18,8 @@ function upgrade_module_1_3_0($module)
 
     $module->deleteTabs();
     $module->registerTabs();
+
+    return true;
 }
 
 function replaceCarrierLogo($id_carrier, $new_logo_path)
