@@ -277,7 +277,7 @@ class AdminItellashippingItellaManifestController extends ModuleAdminController
         // $itella_cart_info = $itellaCart->getOrderItellaCartInfo($order->id_cart);
       }
 
-      $result = $itellaCart->registerLabel($id_order);
+      $result = $this->registerLabel($id_order);
 
       if (isset($result['errors'])) {
         $this->errors[] = $result['errors'];
@@ -293,6 +293,31 @@ class AdminItellashippingItellaManifestController extends ModuleAdminController
     $this->informations[] = $this->l("Saved orders:") . ' ' . implode(', ', $saved);
     $this->informations[] = $this->l("Registered orders:");
     $this->informations = array_merge($this->informations, $registered);
+  }
+
+  private function registerLabel( $id_order )
+  {
+    if ( ! ItellaShipping::checkForClass('ItellaShipment') ) {
+      return array('errors' => sprintf($this->l('Failed to load %s class'), 'ItellaShipment'));
+    }
+    if ( ! $id_order ) {
+      return array('errors' => $this->l('Order ID missing'));
+    }
+
+    $ItellaShipment = new ItellaShipment();
+
+    $result = $ItellaShipment->registerShipment($id_order);
+    if ( isset($result['error']) ) {
+      return array('errors' => $result['error']);
+    }
+
+    $success_msg = (isset($result['success'])) ? $result['success'] : $this->l('Success');
+    $tracking_number = (isset($result['tracking_number'])) ? $result['tracking_number'] : '';
+
+    return array(
+      'success' => $success_msg,
+      'tracking_number' => $tracking_number
+    );
   }
 
   public function processBulkgenerateItellaLabel()
@@ -360,7 +385,8 @@ class AdminItellashippingItellaManifestController extends ModuleAdminController
         if (!$tr_numbers) {
           continue;
         }
-        $shipment = new Shipment(Configuration::get('ITELLA_API_USER_'.$key), Configuration::get('ITELLA_API_PASS_'.$key));
+        $shipment = new Shipment(Configuration::get('ITELLA_API_USER'), Configuration::get('ITELLA_API_PASS'));
+        $shipment->setRoutingClient('BAL-PRESTA');
         $result = base64_decode($shipment->downloadLabels($tr_numbers));
         if ($result) { // check if its not empty and save temporary for merging
           $pdf_path = _PS_MODULE_DIR_ . $this->module->name . '/pdf/' . $temp_name . '-' . $key . '.pdf';

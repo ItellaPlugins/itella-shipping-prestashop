@@ -180,12 +180,8 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
       }
 
       $isTest = (Configuration::get('ITELLA_TEST_MODE') == 1);
-      $username = Configuration::get('ITELLA_API_USER_2317');
-      $password = Configuration::get('ITELLA_API_PASS_2317');
-      if (empty($username)) {
-        $username = Configuration::get('ITELLA_API_USER_2711');
-        $password = Configuration::get('ITELLA_API_PASS_2711');
-      }
+      $username = Configuration::get('ITELLA_API_USER');
+      $password = Configuration::get('ITELLA_API_PASS');
       $email_send_to = Configuration::get('ITELLA_CALL_EMAIL_' . strtoupper($storeObj->country_code));
       $email_subject = Configuration::get('ITELLA_CALL_EMAIL_SUBJECT');
       $sender_name = Configuration::get('ITELLA_SENDER_NAME');

@@ -19,6 +19,7 @@ class ItellaShipping extends CarrierModule
     'ItellaCart' => 'classes/ItellaCart.php',
     'ItellaStore' => 'classes/ItellaStore.php',
     'ItellaManifest' => 'classes/ItellaManifest.php',
+    'ItellaShipment' => 'classes/ItellaShipment.php',
   );
   protected $_carriers = array(
     'ITELLA_COURIER_ID' => 'Smartposti courier',
@@ -52,12 +53,11 @@ class ItellaShipping extends CarrierModule
   // For easier access when filling values into form
   private $_configKeys = array(
     //'ITELLA_TEST_MODE' => 'ITELLA_TEST_MODE',
-    'ITELLA_API_USER_2317' => 'ITELLA_API_USER_2317',
-    'ITELLA_API_PASS_2317' => 'ITELLA_API_PASS_2317',
-    'ITELLA_API_CONTRACT_2317' => 'ITELLA_API_CONTRACT_2317',
-    'ITELLA_API_USER_2711' => 'ITELLA_API_USER_2711',
-    'ITELLA_API_PASS_2711' => 'ITELLA_API_PASS_2711',
-    'ITELLA_API_CONTRACT_2711' => 'ITELLA_API_CONTRACT_2711',
+    'ITELLA_API_USER' => 'ITELLA_API_USER',
+    'ITELLA_API_PASS' => 'ITELLA_API_PASS',
+    'ITELLA_API_CONTRACT' => 'ITELLA_API_CONTRACT',
+    'ITELLA_API_PP_SERVICE' => 'ITELLA_API_PP_SERVICE',
+    'ITELLA_API_C_SERVICE' => 'ITELLA_API_C_SERVICE',
     'ITELLA_COD_MODULES' => 'ITELLA_COD_MODULES',
     //'ITELLA_LABEL_NUM' => 'ITELLA_LABEL_NUM',
     'ITELLA_COD_BIC' => 'ITELLA_COD_BIC',
@@ -106,6 +106,7 @@ class ItellaShipping extends CarrierModule
     $this->confirmUninstall = $this->l('Are you sure you want to uninstall?');
 
     self::checkForClass('ItellaStore');
+    self::checkForClass('ItellaShipment');
 
     if (self::isInstalled($this->name)) {
       $id_carrier_list = self::getAllCarriers(true); // get only IDs
@@ -119,18 +120,12 @@ class ItellaShipping extends CarrierModule
         $warning[] = $this->l('"Smartposti carriers"');
       }
 
-      if (
-        !Configuration::get($this->_configKeys['ITELLA_API_USER_2317']) ||
-        !Configuration::get($this->_configKeys['ITELLA_API_USER_2711'])
-      ) {
-        $warning[] = $this->l('"Both Smartposti API users"');
+      if (!Configuration::get($this->_configKeys['ITELLA_API_USER'])) {
+        $warning[] = $this->l('"Smartposti API user"');
       }
 
-      if (
-        !Configuration::get($this->_configKeys['ITELLA_API_PASS_2317']) ||
-        !Configuration::get($this->_configKeys['ITELLA_API_PASS_2711'])
-      ) {
-        $warning[] = $this->l('"Both Smartposti API password"');
+      if (!Configuration::get($this->_configKeys['ITELLA_API_PASS'])) {
+        $warning[] = $this->l('"Smartposti API password"');
       }
       if (count($warning)) {
         $this->warning .= implode(', ', $warning) . $this->l('must be configured to use this module.');
@@ -183,6 +178,8 @@ class ItellaShipping extends CarrierModule
     }
 
     /* Set defaults */
+    Configuration::updateValue('ITELLA_API_PP_SERVICE', ItellaShipment::getDefaultServiceCode('pickup'));
+    Configuration::updateValue('ITELLA_API_C_SERVICE', ItellaShipment::getDefaultServiceCode('courier'));
     Configuration::updateValue('ITELLA_CALL_EMAIL_SUBJECT', 'E-com order booking');
     foreach ($this->available_countries as $country_code) {
       Configuration::updateValue('ITELLA_CALL_EMAIL_' . strtoupper($country_code), 'smartship.routing.' . strtolower($country_code) . '@itella.com');
@@ -550,16 +547,24 @@ class ItellaShipping extends CarrierModule
     $required = $this->l('is required');
     $bad_format = $this->l('bad format');
 
-    if (empty(Tools::getValue($this->_configKeys['ITELLA_API_USER_2317'])) || empty(Tools::getValue($this->_configKeys['ITELLA_API_USER_2711']))) {
-      $errors[] = $this->l('Both API users') . ' ' . $required;
+    if (empty(Tools::getValue($this->_configKeys['ITELLA_API_USER']))) {
+      $errors[] = $this->l('API user') . ' ' . $required;
     }
 
-    if (empty(Tools::getValue($this->_configKeys['ITELLA_API_PASS_2317'])) || empty(Tools::getValue($this->_configKeys['ITELLA_API_PASS_2711']))) {
-      $errors[] = $this->l('Both API passwords') . ' ' . $required;
+    if (empty(Tools::getValue($this->_configKeys['ITELLA_API_PASS']))) {
+      $errors[] = $this->l('API password') . ' ' . $required;
     }
 
-    if (empty(Tools::getValue($this->_configKeys['ITELLA_API_CONTRACT_2317'])) || empty(Tools::getValue($this->_configKeys['ITELLA_API_CONTRACT_2711']))) {
-      $errors[] = $this->l('Both API contracts') . ' ' . $required;
+    if (empty(Tools::getValue($this->_configKeys['ITELLA_API_CONTRACT']))) {
+      $errors[] = $this->l('API contract') . ' ' . $required;
+    }
+
+    if (empty(Tools::getValue($this->_configKeys['ITELLA_API_PP_SERVICE']))) {
+      $errors[] = $this->l('Parcel locker service') . ' ' . $required;
+    }
+
+    if (empty(Tools::getValue($this->_configKeys['ITELLA_API_C_SERVICE']))) {
+      $errors[] = $this->l('Courier service') . ' ' . $required;
     }
 
     if (Tools::getValue('ITELLA_COD_ENABLED')) {
@@ -884,6 +889,36 @@ class ItellaShipping extends CarrierModule
     // Get default language
     $defaultLang = (int) Configuration::get('PS_LANG_DEFAULT');
 
+    $all_service_codes = ItellaShipment::getAllServiceCodes();
+    $service_titles = array(
+      'pickup' => array(
+        'locker' => $this->l('Parcel Connect'),
+        'postal' => $this->l('Postal Parcel')
+      ),
+      'courier' => array(
+        'express' => $this->l('Express Business Day Parcel'),
+        'home' => $this->l('Home Parcel')
+      )
+    );
+    $pp_service_options = array();
+    if ( isset($all_service_codes['pickup']) ) {
+      foreach ( $all_service_codes['pickup'] as $service_key => $service_code ) {
+        $pp_service_options[] = array(
+          'id_option' => $service_code,
+          'name' => (isset($service_titles['pickup'][$service_key])) ? $service_titles['pickup'][$service_key] : $service_key
+        );
+      }
+    }
+    $c_service_options = array();
+    if ( isset($all_service_codes['courier']) ) {
+      foreach ( $all_service_codes['courier'] as $service_key => $service_code ) {
+        $c_service_options[] = array(
+          'id_option' => $service_code,
+          'name' => (isset($service_titles['courier'][$service_key])) ? $service_titles['courier'][$service_key] : $service_key
+        );
+      }
+    }
+
     $cod_modules = array();
     foreach (PaymentModule::getInstalledPaymentModules() as $value) {
       $cod_modules[] = array(
@@ -905,40 +940,66 @@ class ItellaShipping extends CarrierModule
         //   'name' => $this->_configKeys['ITELLA_TEST_MODE'],
         //   'values' => $this->switch
         // ),
-        array(
+        /*array(
           'type' => 'html',
-          'label' => $this->l('2317 Product Credentials'),
-          'name' => 'itella_2317_creds_html',
+          'label' => $this->l('Credentials'),
+          'name' => 'itella_creds_html',P
           'html_content' => '',
-        ),
+        ),*/
         array(
           'type' => 'text',
           'label' => $this->l('API user'),
-          'name' => $this->_configKeys['ITELLA_API_USER_2317'],
+          'name' => $this->_configKeys['ITELLA_API_USER'],
           'size' => 20,
           'required' => true
         ),
         array(
           'type' => 'text',
           'label' => $this->l('API password'),
-          'name' => $this->_configKeys['ITELLA_API_PASS_2317'],
+          'name' => $this->_configKeys['ITELLA_API_PASS'],
           'size' => 20,
           'required' => true
         ),
         array(
           'type' => 'text',
           'label' => $this->l('API contract'),
-          'name' => $this->_configKeys['ITELLA_API_CONTRACT_2317'],
+          'name' => $this->_configKeys['ITELLA_API_CONTRACT'],
           'size' => 20,
           'required' => true
         ),
         array(
           'type' => 'html',
-          'label' => $this->l('2711 Product Credentials'),
-          'name' => 'itella_2711_creds_html',
-          'html_content' => '',
+          'name' => 'itella_separator_html',
+          'html_content' => '<hr/>',
         ),
         array(
+          'type' => 'select',
+          'label' => $this->l('Parcel locker service'),
+          'name' => $this->_configKeys['ITELLA_API_PP_SERVICE'],
+          'options' => array(
+            'query' => $pp_service_options,
+            'id' => 'id_option',
+            'name' => 'name'
+          ),
+          'required' => true
+        ),
+        array(
+          'type' => 'select',
+          'label' => $this->l('Courier service'),
+          'name' => $this->_configKeys['ITELLA_API_C_SERVICE'],
+          'options' => array(
+            'query' => $c_service_options,
+            'id' => 'id_option',
+            'name' => 'name'
+          ),
+          'required' => true
+        ),
+        array(
+          'type' => 'html',
+          'name' => 'itella_separator_html',
+          'html_content' => '<hr/>',
+        ),
+        /*array(
           'type' => 'text',
           'label' => $this->l('API user'),
           'name' => $this->_configKeys['ITELLA_API_USER_2711'],
@@ -958,7 +1019,7 @@ class ItellaShipping extends CarrierModule
           'name' => $this->_configKeys['ITELLA_API_CONTRACT_2711'],
           'size' => 20,
           'required' => true
-        ),
+        ),*/
         array(
           'type' => 'hidden',
           'name' => 'ITELLA_COD_ENABLED',
@@ -1551,7 +1612,7 @@ class ItellaShipping extends CarrierModule
    * @param int $id_carrier
    * @param bool $check_reference
    */
-  public function isItellaCarrier($id_carrier, $check_reference = false)
+  public function belongsToItellaCarriers($id_carrier, $check_reference = false)
   {
     $itella_carriers = array();
     foreach ($this->_carriers as $key => $value) {
@@ -1572,7 +1633,7 @@ class ItellaShipping extends CarrierModule
       if ( ! isset($carrier['id_reference']) ) {
         continue;
       }
-      if ( $this->isItellaCarrier($carrier['id_reference'], true) ) {
+      if ( $this->belongsToItellaCarriers($carrier['id_reference'], true) ) {
         $itella_carriers[] = $carrier;
       }
     }
@@ -1580,16 +1641,29 @@ class ItellaShipping extends CarrierModule
     return $itella_carriers;
   }
 
+  public static function isItellaCarrier( $carrier )
+  {
+    if (
+      $carrier->id_reference == Configuration::get('ITELLA_COURIER_ID_REFERENCE') ||
+      $carrier->id_reference == Configuration::get('ITELLA_PICKUP_POINT_ID_REFERENCE')
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
   public function hookDisplayAdminOrder($params)
   {
     $order = new Order((int) $params['id_order']);
     $carrier = new Carrier($order->id_carrier);
 
-    if (!$this->isItellaCarrier($carrier->id_reference, true)) {
+    if (!$this->belongsToItellaCarriers($carrier->id_reference, true)) {
       return '';
     }
 
     self::checkForClass('ItellaCart');
+    self::checkForClass('ItellaShipment');
 
     $itellaCart = new ItellaCart();
     $itella_cart_info = $itellaCart->getOrderItellaCartInfo($order->id_cart);
@@ -1615,7 +1689,8 @@ class ItellaShipping extends CarrierModule
 
     $address = new Address($order->id_address_delivery);
     $country = new Country();
-    $pickup_points = json_decode($this->loadItellaLocations($country->getIsoById($address->id_country)), true);
+    $country_iso = $country->getIsoById($address->id_country);
+    $pickup_points = json_decode($this->loadItellaLocations($country_iso), true);
     if ( ! is_array($pickup_points) ) {
       $pickup_points = array();
     }
@@ -1636,6 +1711,14 @@ class ItellaShipping extends CarrierModule
       $itella_generate_label_url = $this->context->link->getAdminLink('AdminItellashippingAjax', true) . '&action=genlabel&id_order=' . $order->id;
       $itella_print_label_url = $this->context->link->getAdminLink('AdminItellashippingAjax', true) . '&action=printLabel&id_order=' . $order->id;
     }
+
+    if ( ItellaShipment::isInternational($country_iso) ) {
+      $courier_service_code = ItellaShipment::getInternationalServiceCode();
+    } else {
+      $courier_service_code = Configuration::get('ITELLA_API_C_SERVICE');
+    }
+
+    $courier_additional_services = ItellaShipment::get_available_additional_services($courier_service_code);
 
     $itella_cod_modules = explode(',', Configuration::get('ITELLA_COD_MODULES'));
     $is_current_cod = in_array($order->module, $itella_cod_modules);
@@ -1662,6 +1745,7 @@ class ItellaShipping extends CarrierModule
       'itella_module_url' => $itella_module_url,
       'itella_generate_label_url' => $itella_generate_label_url,
       'itella_print_label_url' => $itella_print_label_url,
+      'itella_c_extra_services' => $courier_additional_services,
       'itella_cod_modules' => $itella_cod_modules,
       'itella_order' => $order,
       'itella_cod_warn' => $cod_warning,
@@ -1753,6 +1837,7 @@ class ItellaShipping extends CarrierModule
         require_once _PS_MODULE_DIR_ . self::$_name . '/' . self::$_classMap[$className];
       }
     }
+    return class_exists($className);
   }
 
   public static function useHttps($url)
