@@ -22,9 +22,13 @@
             <span>{l s="Packets (total)" mod='itellashipping'}:</span>
             <span>
               <select name="packs" id="itella-packs" class="">
-                {for $amount=1 to 10}
-                  <option value="{$amount}" {if isset($orderItellaCartInfo.packs) && $orderItellaCartInfo.packs==$amount} selected="selected" {/if}>{$amount}</option>
-                {/for}
+                {if isset($itella_c_extra_services.multiparcel)}
+                  {for $amount=1 to 10}
+                    <option value="{$amount}" {if isset($orderItellaCartInfo.packs) && $orderItellaCartInfo.packs==$amount} selected="selected" {/if}>{$amount}</option>
+                  {/for}
+                {else}
+                    <option value="1" selected="selected">1</option>
+                {/if}
               </select>
             </span>
           </div>
@@ -117,21 +121,25 @@
 
           <div class="row">
             <div class="col-xs-12">
-              <label class="checkbox-inline">
-                <input type="checkbox" value="is_oversized" name="itella_extra[]" {if $orderItellaCartInfo.is_oversized} checked="checked" {/if}>
+              {assign var="is_available" value=isset($itella_c_extra_services.oversized)}
+              <label class="checkbox-inline" {if !$is_available} style="opacity:0.3;" {/if}>
+                <input type="checkbox" value="is_oversized" name="itella_extra[]" {if $orderItellaCartInfo.is_oversized} checked="checked" {/if}{if !$is_available} disabled="disabled" {/if}>
                 {l s="Oversized" mod='itellashipping'}
               </label>
-              <label class="checkbox-inline">
-                <input type="checkbox" value="is_call_before_delivery" name="itella_extra[]" {if $orderItellaCartInfo.is_call_before_delivery} checked="checked" {/if}>
+              {assign var="is_available" value=isset($itella_c_extra_services.call_before_delivery)}
+              <label class="checkbox-inline" {if !$is_available} style="opacity:0.3;" {/if}>
+                <input type="checkbox" value="is_call_before_delivery" name="itella_extra[]" {if $orderItellaCartInfo.is_call_before_delivery} checked="checked" {/if}{if !$is_available} disabled="disabled" {/if}>
                 {l s="Call before delivery" mod='itellashipping'}
               </label>
-              <label class="checkbox-inline">
-                <input type="checkbox" value="is_fragile" name="itella_extra[]" {if $orderItellaCartInfo.is_fragile} checked="checked" {/if}>
+              {assign var="is_available" value=isset($itella_c_extra_services.fragile)}
+              <label class="checkbox-inline" {if !$is_available} style="opacity:0.3;" {/if}>
+                <input type="checkbox" value="is_fragile" name="itella_extra[]" {if $orderItellaCartInfo.is_fragile} checked="checked" {/if}{if !$is_available} disabled="disabled" {/if}>
                 {l s="Fragile" mod='itellashipping'}
               </label>
-              <label class="checkbox-inline" id="multi_parcel_chb">
+              {assign var="is_available" value=isset($itella_c_extra_services.multiparcel)}
+              <label class="checkbox-inline" id="multi_parcel_chb" {if !$is_available} style="opacity:0.3;" {/if}>
               <input type="hidden" id="itella-multi" name="itella_extra[]" value="is_multi" disabled="disabled">
-                <input disabled="disabled" type="checkbox" checked>
+                <input disabled="disabled" type="checkbox" checked {if $is_available} checked {/if}>
                 {l s="Multi parcel" mod='itellashipping'}
               </label>
             </div>
