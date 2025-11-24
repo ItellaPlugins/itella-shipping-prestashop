@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.4.0]
+### Fixed
+- fixed v1.3.0 upgrade function
+
+### Changed
+- changed so that API logins are not divided into products, but the same ones are used for all
+- shipment registration functions are centralized into one class to avoid duplication of functions
+
+### Updated
+- itella-api to v2.5.0
+
+### Improved
+- added the option to choose which service to use for parcel locker and courier methods in the plugin settings
+
 ## [1.3.4]
 ### Updated
 - itella-api to v2.4.10
