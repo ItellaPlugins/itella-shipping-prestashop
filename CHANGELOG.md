@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.4.0]
 ### Fixed
 - fixed v1.3.0 upgrade function
 
