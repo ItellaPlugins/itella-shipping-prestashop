@@ -285,6 +285,7 @@ class AdminItellashippingItellaManifestController extends ModuleAdminController
       }
 
       if (isset($result['success'])) {
+		ItellaShipping::changeOrderStatus($id_order, ItellaShipping::getCustomOrderState());
         $registered[] = $id_order . ': ' . $result['success'] . ' ' . $result['tracking_number'];
       }
     }
