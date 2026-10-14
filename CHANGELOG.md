@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.4.2]
 ### Improved
 - added additional service 3376 to parcel locker shipments when outdoor parcel lockers are excluded in the settings
 
