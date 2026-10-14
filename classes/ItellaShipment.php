@@ -126,6 +126,8 @@ class ItellaShipment
                 }
             }
 
+            $is_pickup_point_service = self::isPickupService($product_code);
+
             // Create and configure sender
             $sender = new Party(Party::ROLE_SENDER);
             $sender
@@ -183,6 +185,11 @@ class ItellaShipment
                 $extra[] = new AdditionalService($es_code, $es_values);
             }
 
+            // Block delivery or redirection to outdoor locker
+            if ( $is_pickup_point_service && (int) \Configuration::get('ITELLA_DISABLE_OUTDOORS_PICKUP_POINTS') ) {
+                $extra[] = new AdditionalService(AdditionalService::BLOCK_OUTDOOR_LOCKER);
+            }
+
             // Create shipment object
             $shipment = $this->createShipmentObject();
             $shipment
@@ -199,7 +206,7 @@ class ItellaShipment
                 $shipment->setComment($data['comment']);
             }
 
-            if ( self::isPickupService($product_code) ) {
+            if ( $is_pickup_point_service ) {
                 $shipment->setPickupPoint($data['id_pickup_point']);
             }
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.2]
+### Improved
+- added additional service 3376 to parcel locker shipments when outdoor parcel lockers are excluded in the settings
+
+### Updated
+- itella-api to v2.5.3
+
 ## [1.4.1]
 ### Updated
 - itella-api to v2.5.1

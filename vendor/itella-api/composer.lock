@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "314dec20348cdd9f416eb5eb82ee3549",
+    "content-hash": "8ba351a58100cd36ed959ec0db8e23d3",
     "packages": [
         {
             "name": "cweagans/composer-patches",
@@ -267,5 +267,5 @@
     "prefer-lowest": false,
     "platform": {},
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
