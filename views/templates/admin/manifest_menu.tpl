@@ -40,6 +40,7 @@ if(stores) {
 }
 
 var itella_modal = false;
+var itella_call_in_progress = false;
 
 $(document).ready(function () {
   create_itella_modal();
@@ -114,14 +115,26 @@ function create_itella_modal() {
       .replace('%%RIGHT_BTN_TXT%%', right_button_txt);
     confirmModal = $(templateHtml);
   }
-  confirmModal.find('#confirm_modal_left_button').click(function () {
+  confirmModal.find('#confirm_modal_left_button').click(function (e) {
+    e.preventDefault();
+    // prevent sending multiple requests on double click
+    if (itella_call_in_progress) {
+      return false;
+    }
+    itella_call_in_progress = true;
+    var send_btn = $(this);
+    send_btn.addClass('disabled').attr('aria-disabled', 'true');
+
     sendCall($('#id_itella_store').val(), itella_manifest_id, {
       call_message: $('#call_message').val(),
       call_date: $('#call_date').val(),
       call_time_from: $('#call_time_from').val(),
       call_time_to: $('#call_time_to').val()
+    }, function () {
+      itella_call_in_progress = false;
+      send_btn.removeClass('disabled').removeAttr('aria-disabled');
+      confirmModal.modal('hide');
     });
-    confirmModal.modal('hide');
   });
   confirmModal.find('#confirm_modal_right_button').click(function () {
     confirmModal.modal('hide');
@@ -162,7 +175,7 @@ function findStoreInfo(id_store) {
   return false;
 }
 
-function sendCall(address_id, manifest_id, params = {}) {
+function sendCall(address_id, manifest_id, params = {}, on_complete = null) {
   if (!address_id) {
     showErrorMessage('{l s="No store selected" mod="itellashipping"}');
   }
@@ -178,7 +191,6 @@ function sendCall(address_id, manifest_id, params = {}) {
     type: "POST",
     //url: "{$call_url}&ajax=1&id_itella_store=" + address_id + "&id_manifest=" + manifest_id,
     url: "{$call_url}",
-    async: false,
     //processData: false, //TODO: Istrinti jeigu neprireiks
     //contentType: false, //TODO: Istrinti jeigu neprireiks
     cache: false,
@@ -193,6 +205,11 @@ function sendCall(address_id, manifest_id, params = {}) {
     },
     error: function (res) {
       showErrorMessage('{l s="Failed to request Call courier" mod="itellashipping"}');
+    },
+    complete: function () {
+      if (typeof on_complete === 'function') {
+        on_complete();
+      }
     }
   });
 }
