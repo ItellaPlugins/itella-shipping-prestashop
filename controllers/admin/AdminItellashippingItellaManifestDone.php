@@ -9,6 +9,9 @@ use Mijora\Itella\ItellaException;
 class AdminItellashippingItellaManifestDoneController extends ModuleAdminController
 {
 
+  /** @var int Time in seconds during which repeated courier call for same manifest is blocked */
+  const CALL_COURIER_LOCK_TIME = 60;
+
   /** @var bool Is bootstrap used */
   public $bootstrap = true;
 
@@ -179,6 +182,15 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
         exit();
       }
 
+      $lock_time_left = $this->acquireCallCourierLock($manifest->id);
+      if ($lock_time_left > 0) {
+        echo json_encode(array('error' => sprintf(
+          $this->l('Courier call for this manifest was already sent. Please wait %d seconds before trying again.'),
+          $lock_time_left
+        )));
+        exit();
+      }
+
       $isTest = (Configuration::get('ITELLA_TEST_MODE') == 1);
       $username = Configuration::get('ITELLA_API_USER');
       $password = Configuration::get('ITELLA_API_PASS');
@@ -283,6 +295,8 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
       $return = array();
       if (empty($success) && !empty($errors)) {
         $return['error'] = implode('<br/>', $errors);
+        // nothing was sent, so allow to retry immediately
+        $this->releaseCallCourierLock($manifest->id);
       } else if (!empty($errors)) {
         $return['success'] = implode('<br/>', $success) . '<br/><br/><span style="color:#f55;">' . implode('<br/>', $errors) . '</span>';
       } else if (!empty($success)) {
@@ -296,6 +310,55 @@ class AdminItellashippingItellaManifestDoneController extends ModuleAdminControl
     }
     echo json_encode(array('error' => $this->l('Bad store address ID')));
     exit();
+  }
+
+  private function getCallCourierLockFile($id_manifest)
+  {
+    return _PS_CACHE_DIR_ . 'itella_call_courier_' . (int) $id_manifest . '.lock';
+  }
+
+  /**
+   * Atomically checks and sets courier call lock for manifest
+   *
+   * @return int Seconds left until lock expires, 0 if lock was acquired
+   */
+  private function acquireCallCourierLock($id_manifest)
+  {
+    $handle = @fopen($this->getCallCourierLockFile($id_manifest), 'c+');
+    if (!$handle) {
+      return 0; // failed to create lock file, do not block the call
+    }
+    if (!flock($handle, LOCK_EX)) {
+      fclose($handle);
+      return 0;
+    }
+
+    $time_left = 0;
+    $last_call_time = (int) stream_get_contents($handle);
+    if ($last_call_time > 0) {
+      $time_left = $last_call_time + self::CALL_COURIER_LOCK_TIME - time();
+    }
+
+    if ($time_left <= 0) {
+      $time_left = 0;
+      ftruncate($handle, 0);
+      rewind($handle);
+      fwrite($handle, (string) time());
+      fflush($handle);
+    }
+
+    flock($handle, LOCK_UN);
+    fclose($handle);
+
+    return $time_left;
+  }
+
+  private function releaseCallCourierLock($id_manifest)
+  {
+    $file = $this->getCallCourierLockFile($id_manifest);
+    if (file_exists($file)) {
+      @unlink($file);
+    }
   }
 
   private function sendCallEmail($caller, $send_to, $manifest_string, $shop_id)

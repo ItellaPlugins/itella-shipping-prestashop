@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.4.3]
+### Fixed
+- fixed an issue where two courier call requests were sent when the button was double-clicked
+
 ## [1.4.2]
 ### Improved
 - added additional service 3376 to parcel locker shipments when outdoor parcel lockers are excluded in the settings
