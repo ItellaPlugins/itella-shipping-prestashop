@@ -4,6 +4,9 @@
 ### Fixed
 - fixed outdoor locations filter removing wrong points
 
+### Updated
+- itella-api to v2.5.4
+
 ## [1.4.3]
 ### Fixed
 - fixed an issue where two courier call requests were sent when the button was double-clicked
