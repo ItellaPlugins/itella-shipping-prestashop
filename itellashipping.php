@@ -454,7 +454,7 @@ class ItellaShipping extends CarrierModule
     $carrier->shipping_external = true;
     $carrier->shipping_handling = false;
     //$carrier->limited_countries = array('lt');
-    $carrier->url = '';
+    $carrier->url = ItellaShipment::getCarrierTrackingUrl();
     $carrier->active = true;
     $carrier->deleted = 0;
 
@@ -1401,11 +1401,23 @@ class ItellaShipping extends CarrierModule
     $carrier = new Carrier($order->id_carrier, $order->id_lang);
     $shipping_number = (property_exists($order, 'shipping_number')) ? $order->shipping_number : $order->getWsShippingNumber();
 
+    $followup = str_replace('@', $shipping_number, $carrier->url);
+    $tracking_url = $carrier->url;
+    if (self::isItellaCarrier($carrier) && !empty($shipping_number)) {
+      // Use tracking link localized to delivery country
+      $address = new Address((int) $order->id_address_delivery);
+      $country_code = Country::getIsoById((int) $address->id_country);
+      $followup = ItellaShipment::getTrackingUrl($shipping_number, $country_code);
+      if (empty($tracking_url)) {
+        $tracking_url = ItellaShipment::getCarrierTrackingUrl($country_code);
+      }
+    }
+
     $params['extra_template_vars'] = array_merge(
-      $params['extra_template_vars'], 
+      $params['extra_template_vars'],
       array(
-        '{followup}' => str_replace('@', $shipping_number, $carrier->url),
-        '{tracking_url}' => $carrier->url,
+        '{followup}' => $followup,
+        '{tracking_url}' => $tracking_url,
         '{tracking_code}' => $shipping_number
     ));
   }

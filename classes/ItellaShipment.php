@@ -23,6 +23,77 @@ class ItellaShipment
         return (! in_array(strtoupper($receiver_country), $local_countries));
     }
 
+    /**
+     * Returns country code used for tracking links when receiver country is unknown.
+     * Sender country from module settings, otherwise shop default country.
+     * @return string
+     */
+    public static function getDefaultTrackingCountry()
+    {
+        $country_code = \Configuration::get('ITELLA_SENDER_COUNTRY_CODE');
+        if ( empty($country_code) ) {
+            $country_code = \Country::getIsoById((int) \Configuration::get('PS_COUNTRY_DEFAULT'));
+        }
+
+        return strtoupper((string) $country_code);
+    }
+
+    /**
+     * Returns shipment tracking URL for the tracking number
+     * @param string $tracking_number Tracking number
+     * @param string|null $country_code Country code (ISO 3166-1 alpha-2). If not supplied, sender country is used
+     * @return string
+     */
+    public static function getTrackingUrl( $tracking_number, $country_code = null )
+    {
+        if ( $country_code === null ) {
+            $country_code = self::getDefaultTrackingCountry();
+        }
+
+        return ItellaHelper::getTrackingUrl($tracking_number, $country_code);
+    }
+
+    /**
+     * Returns tracking URL template in PrestaShop carrier format (tracking number replaced by "@")
+     * @param string|null $country_code Country code (ISO 3166-1 alpha-2). If not supplied, sender country is used
+     * @return string
+     */
+    public static function getCarrierTrackingUrl( $country_code = null )
+    {
+        if ( $country_code === null ) {
+            $country_code = self::getDefaultTrackingCountry();
+        }
+
+        $country_code = strtoupper((string) $country_code);
+        $tracking_urls = ItellaHelper::TRACKING_URLS;
+        if ( ! isset($tracking_urls[$country_code]) ) {
+            $country_code = ItellaHelper::TRACKING_URL_DEFAULT_COUNTRY;
+        }
+
+        return str_replace(ItellaHelper::VAR_TRACKING_CODE, '@', $tracking_urls[$country_code]);
+    }
+
+    /**
+     * Sets tracking URL on carrier, so that tracking number in order is displayed as a link
+     * @param \Carrier $carrier
+     * @param bool $force Overwrite URL even if carrier already has one
+     * @return bool
+     */
+    public static function setCarrierTrackingUrl( $carrier, $force = false )
+    {
+        if ( ! \Validate::isLoadedObject($carrier) ) {
+            return false;
+        }
+
+        if ( ! $force && ! empty($carrier->url) ) {
+            return true;
+        }
+
+        $carrier->url = self::getCarrierTrackingUrl();
+
+        return (bool) $carrier->update();
+    }
+
     public static function getAllServiceCodes()
     {
         // First value of each type is default
@@ -220,6 +291,13 @@ class ItellaShipment
             $order->setWsShippingNumber($tracking_number);
             $order->shipping_number = $tracking_number;
             $order->update();
+
+            // Make sure order carrier has tracking URL, so tracking number is displayed as a link
+            try {
+                self::setCarrierTrackingUrl(new \Carrier((int) $order->id_carrier));
+            } catch ( \Exception $e ) {
+                // Failing to set tracking URL should not affect shipment registration
+            }
 
             ItellaShipping::changeOrderStatus($id_order, ItellaShipping::getCustomOrderState());
 

@@ -7,6 +7,10 @@
 ### Updated
 - itella-api to v2.5.4
 
+### Improved
+- added shipment tracking URL to module carriers, so the tracking number in the order is displayed as a tracking link
+- "shipped" email `{followup}` variable now contains a tracking link localized to the delivery country
+
 ## [1.4.3]
 ### Fixed
 - fixed an issue where two courier call requests were sent when the button was double-clicked
