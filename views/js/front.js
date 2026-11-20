@@ -82,19 +82,22 @@ var ItellaModule = new function () {
       return locations;
     }
 
-    let i = locations.length;
-    while (i--) {
-      if (!Object.hasOwn(locations[i], 'capabilities') || locations[i].capabilities == null) {
-        continue;
+    return locations.filter(function (location) {
+      if (!location || !Array.isArray(location.capabilities)) {
+        return true;
       }
-      for (let j = 0; j < locations[i].capabilities.length; j++) {
-        if (itella_locations_filters.exclude_outdoors && locations[i].capabilities[j].name == 'outdoors' && locations[i].capabilities[j].value == 'OUTDOORS') {
-          locations.splice(i, 1);
+
+      if (itella_locations_filters.exclude_outdoors) {
+        var isOutdoors = location.capabilities.some(function (capability) {
+          return capability && capability.name == 'outdoors' && capability.value == 'OUTDOORS';
+        });
+        if (isOutdoors) {
+          return false;
         }
       }
-    }
 
-    return locations;
+      return true;
+    });
   }
 
   this.checkPlacement = function () {
