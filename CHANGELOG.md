@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.4.4]
 ### Fixed
 - fixed outdoor locations filter removing wrong points
 
